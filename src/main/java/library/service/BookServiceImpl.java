@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class BookServiceImpl implements BookService {
-    private List<Book> bookRepository = new ArrayList<>(
+    private final List<Book> bookRepository = new ArrayList<>(
             List.of(
                     Book.builder()
                             .id(0)

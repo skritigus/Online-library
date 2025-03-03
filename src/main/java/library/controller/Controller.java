@@ -20,13 +20,13 @@ public class Controller {
         this.bookService = bookService;
     }
 
-    @GetMapping
-    public Book getBookById(@RequestParam("id") int id) {
+    @GetMapping("/{id}")
+    public Book getBookById(@PathVariable int id) {
         return bookService.getBookById(id);
     }
 
-    @GetMapping("/{name}")
-    public List<Book> getBookByName(@PathVariable String name) {
+    @GetMapping
+    public List<Book> getBookByName(@RequestParam(name = "name") String name) {
         return bookService.getBookByName(name);
     }
 }
