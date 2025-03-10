@@ -5,7 +5,6 @@ target/
 /mvnw
 *.cmd
 *.iml
-src/test/
 
 # Compiled class file
 *.class
