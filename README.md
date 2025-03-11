@@ -8,3 +8,6 @@
 4. Оставление рецензий, комментариев и оценок к книгам.
 5. Генерация рекомендаций на основе предпочтений пользователя.
 6. Возможность скачивания книг.
+
+# SonarCloud
+https://sonarcloud.io/summary/overall?id=skritigus_Online-library&branch=main
