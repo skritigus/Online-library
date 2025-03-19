@@ -43,8 +43,8 @@ public class Book {
     private Set<Category> categories;
     @Column(name = "page_amount", nullable = false)
     private int pageAmount;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @JoinColumn(name = "book_id")
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Review> reviews;
     @Column(name = "year")
     private int year;

@@ -70,7 +70,7 @@ public class CategoryService {
     }
 
     public void deleteCategory(Long id) {
-        if (categoryRepository.existsById(id)) {
+        if (!categoryRepository.existsById(id)) {
             throw new NotFoundException(CATEGORY_NOT_FOUND_MESSAGE + id);
         }
         categoryRepository.deleteById(id);
