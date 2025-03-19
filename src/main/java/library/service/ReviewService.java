@@ -32,8 +32,9 @@ public class ReviewService {
     }
 
     public ReviewGetDto getReviewById(Long id, Long bookId) {
-        bookRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(BOOK_NOT_FOUND_MESSAGE + bookId));
+        if (!bookRepository.existsById(id)) {
+            throw new NotFoundException(BOOK_NOT_FOUND_MESSAGE + bookId);
+        }
         Review review = reviewRepository.findByIdAndBookId(id, bookId)
                 .orElseThrow(() -> new NotFoundException(REVIEW_NOT_FOUND_MESSAGE + id));
         return ReviewMapper.toDto(review);
@@ -56,8 +57,10 @@ public class ReviewService {
     }
 
     public ReviewGetDto updateReview(Long id, Long bookId, ReviewCreateDto reviewDto) {
-        Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new NotFoundException(BOOK_NOT_FOUND_MESSAGE + bookId));
+        if (!bookRepository.existsById(bookId)) {
+            throw new NotFoundException(BOOK_NOT_FOUND_MESSAGE + bookId);
+        }
+
         Review reviewEntity = reviewRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(REVIEW_NOT_FOUND_MESSAGE + id));
         reviewEntity.setComment(reviewDto.getComment());
