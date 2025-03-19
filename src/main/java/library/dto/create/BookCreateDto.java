@@ -1,25 +1,21 @@
 package library.dto.create;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import library.dto.get.AuthorGetDto;
-import library.dto.get.CategoryGetDto;
-import library.dto.get.ReviewGetDto;
+import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
 
 @Getter
 @Setter
 public class BookCreateDto {
     @NotBlank(message = "Book's name can't be blank")
-    @Size(min = 1, max = 255)
+    @Size(max = 255, message = "Book name must be less than 256 characters")
     private String name;
-    private List<Long> authorIds;
-    private List<Long> categoryIds;
-    @NotBlank(message = "Book's page amount can't be blank")
+    private Set<Long> authorIds;
+    private Set<Long> categoryIds;
+    @NotNull(message = "Book's page amount can't be blank")
     private int pageAmount;
-    private List<Long> reviewIds;
     private int year;
 }

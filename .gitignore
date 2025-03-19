@@ -1,4 +1,5 @@
 .idea/
+*.properties
 .mvn/
 target/
 /HELP.md

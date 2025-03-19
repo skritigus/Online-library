@@ -1,8 +1,8 @@
 package library.controller;
 
+import jakarta.validation.Valid;
+import library.dto.create.AuthorCreateDto;
 import library.dto.get.AuthorGetDto;
-import library.exception.NotFoundException;
-import library.model.Author;
 import library.service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,22 +28,19 @@ public class AuthorController {
 
     @GetMapping("/{id}")
     public ResponseEntity<AuthorGetDto> getAuthorById(@PathVariable Long id) {
-        AuthorGetDto author = authorService.getAuthorById(id);
-        return ResponseEntity.ok(author);
+        return ResponseEntity.ok(authorService.getAuthorById(id));
     }
 
     @PostMapping
-    public ResponseEntity<Author> createAuthor(@RequestBody Author author) {
+    public ResponseEntity<AuthorGetDto> createAuthor(@Valid @RequestBody AuthorCreateDto author) {
         return new ResponseEntity<>(authorService.createAuthor(author), HttpStatus.CREATED);
     }
 
-    /*@PutMapping("/{id}")
-    public ResponseEntity<Author> updateAuthor(@PathVariable Long id, @RequestBody Author author) {
-        AuthorGetDto updatedAuthor = authorService.getAuthorById(id);
-        updatedAuthor.setName(author.getName());
-        updatedAuthor.setName(author.getInfo());
-        return ResponseEntity.ok(authorService.createAuthor(updatedAuthor));
-    }*/
+    @PutMapping("/{id}")
+    public ResponseEntity<AuthorGetDto> updateAuthor(@PathVariable Long id,
+                                                     @Valid @RequestBody AuthorCreateDto author) {
+        return ResponseEntity.ok(authorService.updateAuthor(id, author));
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAuthor(@PathVariable Long id) {

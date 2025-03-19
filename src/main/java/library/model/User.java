@@ -1,16 +1,22 @@
 package library.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.*;
-
-import java.util.ArrayList;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import java.util.List;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Component;
+import lombok.Setter;
 
-@Component
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "users")
 @AllArgsConstructor
@@ -26,6 +32,6 @@ public class User {
     @Column(name = "email", unique = true, nullable = false)
     private String email;
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL)
-    private ArrayList<Review> reviews;
+            cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Review> reviews;
 }

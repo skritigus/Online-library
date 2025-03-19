@@ -1,15 +1,21 @@
 package library.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.*;
-import java.util.List;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.PreRemove;
+import jakarta.persistence.Table;
+import java.util.Set;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Component;
+import lombok.Setter;
 
-@Component
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "authors")
 @AllArgsConstructor
@@ -23,5 +29,12 @@ public class Author {
     @Column(name = "info")
     private String info;
     @ManyToMany(mappedBy = "authors")
-    private List<Book> books;
+    private Set<Book> books;
+
+    @PreRemove
+    private void removeBookAssociations() {
+        for (Book book : this.books) {
+            book.getAuthors().remove(this);
+        }
+    }
 }

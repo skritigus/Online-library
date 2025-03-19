@@ -1,9 +1,8 @@
 package library.controller;
 
-import library.dto.get.AuthorGetDto;
+import jakarta.validation.Valid;
+import library.dto.create.UserCreateDto;
 import library.dto.get.UserGetDto;
-import library.exception.NotFoundException;
-import library.model.User;
 import library.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -34,19 +33,15 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
+    public ResponseEntity<UserGetDto> createUser(@Valid @RequestBody UserCreateDto user) {
         return new ResponseEntity<>(userService.createUser(user), HttpStatus.CREATED);
     }
 
-    /*@PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
-        User updatedUser = userService.getUserById(id)
-               .orElseThrow(() -> new NotFoundException("User with id " + id + " not found"));
-
-        updatedUser.setName(user.getName());
-        updatedUser.setEmail(user.getEmail());
-        return new ResponseEntity<>(userService.createUser(updatedUser), HttpStatus.OK);
-    }*/
+    @PutMapping("/{id}")
+    public ResponseEntity<UserGetDto> updateUser(@PathVariable Long id,
+                                                 @Valid @RequestBody UserCreateDto user) {
+        return ResponseEntity.ok(userService.updateUser(id, user));
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {

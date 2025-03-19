@@ -1,12 +1,11 @@
 package library.repository;
 
+import java.util.Optional;
 import library.model.Review;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
-    List<Review> findReviewsByRating(int rating);
+    Optional<Review> findByIdAndBookId(Long id, Long bookId);
 }

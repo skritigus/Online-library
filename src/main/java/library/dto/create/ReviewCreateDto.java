@@ -1,16 +1,14 @@
 package library.dto.create;
 
-import jakarta.validation.constraints.*;
-import library.dto.get.BookGetDto;
-import library.dto.get.UserGetDto;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 public class ReviewCreateDto {
-    @NotNull(message = "Book ID cannot be null")
-    private Long bookId;
     @NotNull(message = "User ID cannot be null")
     private Long userId;
     @NotNull(message = "Rating cannot be null")
