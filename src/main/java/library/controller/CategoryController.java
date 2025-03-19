@@ -3,7 +3,6 @@ package library.controller;
 import jakarta.validation.Valid;
 import library.dto.create.CategoryCreateDto;
 import library.dto.get.CategoryGetDto;
-import library.model.Category;
 import library.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,8 +38,8 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CategoryGetDto> updateCategory(@PathVariable Long id,
-                                                         @Valid @RequestBody CategoryCreateDto category) {
+    public ResponseEntity<CategoryGetDto> updateCategory(
+            @PathVariable Long id, @Valid @RequestBody CategoryCreateDto category) {
         return ResponseEntity.ok(categoryService.updateCategory(id, category));
     }
 

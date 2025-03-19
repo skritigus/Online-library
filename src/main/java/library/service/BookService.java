@@ -22,9 +22,14 @@ public class BookService {
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
     private final CategoryRepository categoryRepository;
+    private static final String AUTHOR_NOT_FOUND_MESSAGE = "Author is not found with id: ";
+    private static final String BOOK_NOT_FOUND_MESSAGE = "Book is not found with id: ";
+    private static final String CATEGORY_NOT_FOUND_MESSAGE = "Category is not found with id: ";
 
     @Autowired
-    public BookService(BookRepository bookRepository, AuthorRepository authorRepository, CategoryRepository categoryRepository) {
+    public BookService(BookRepository bookRepository,
+                       AuthorRepository authorRepository,
+                       CategoryRepository categoryRepository) {
         this.bookRepository = bookRepository;
         this.authorRepository = authorRepository;
         this.categoryRepository = categoryRepository;
@@ -32,7 +37,7 @@ public class BookService {
 
     public BookGetDto getBookById(Long id) {
         Book book = bookRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Book with id " + id + " not found"));
+                .orElseThrow(() -> new NotFoundException(BOOK_NOT_FOUND_MESSAGE + id));
         return BookMapper.toDto(book);
     }
 
@@ -45,26 +50,29 @@ public class BookService {
 
         Set<Author> authors = new HashSet<>();
         if (bookDto.getAuthorIds() != null && !bookDto.getAuthorIds().isEmpty()) {
-            authors = bookDto.getAuthorIds().stream().map(authorId -> authorRepository.findById(authorId)
-                    .orElseThrow(() -> new NotFoundException("Author with id " + authorId + " not found"))).collect(Collectors.toSet());
+            authors = bookDto.getAuthorIds().stream()
+                    .map(authorId -> authorRepository.findById(authorId)
+                    .orElseThrow(() -> new NotFoundException(AUTHOR_NOT_FOUND_MESSAGE + authorId)))
+                    .collect(Collectors.toSet());
         }
 
-
-            Set<Category> categories = new HashSet<>();
-            if (bookDto.getCategoryIds() != null && !bookDto.getCategoryIds().isEmpty()) {
-                categories = bookDto.getCategoryIds().stream().map(categoryId -> categoryRepository.findById(categoryId)
-                        .orElseThrow(()
-                                -> new NotFoundException("Author with id " + categoryId + " not found"))).collect(Collectors.toSet());
-            }
-                bookEntity.setCategories(categories);
-                bookEntity.setAuthors(authors);
+        Set<Category> categories = new HashSet<>();
+        if (bookDto.getCategoryIds() != null && !bookDto.getCategoryIds().isEmpty()) {
+            categories = bookDto.getCategoryIds().stream()
+                    .map(categoryId -> categoryRepository.findById(categoryId)
+                    .orElseThrow(()
+                            -> new NotFoundException(CATEGORY_NOT_FOUND_MESSAGE + categoryId)))
+                    .collect(Collectors.toSet());
+        }
+        bookEntity.setCategories(categories);
+        bookEntity.setAuthors(authors);
 
         return BookMapper.toDto(bookRepository.save(bookEntity));
     }
 
     public BookGetDto updateBook(Long id, BookCreateDto bookDto) {
         Book bookEntity = bookRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Book with id " + id + " not found"));
+                .orElseThrow(() -> new NotFoundException(BOOK_NOT_FOUND_MESSAGE + id));
         bookEntity.setName(bookDto.getName());
         bookEntity.setYear(bookDto.getYear());
         bookEntity.setPageAmount(bookDto.getPageAmount());
@@ -74,7 +82,8 @@ public class BookService {
         if (bookDto.getAuthorIds() != null && !bookDto.getAuthorIds().isEmpty()) {
             bookDto.getAuthorIds().forEach(authorId -> {
                 Author author = authorRepository.findById(authorId)
-                        .orElseThrow(() -> new NotFoundException("Book with id " + authorId + " not found"));
+                        .orElseThrow(()
+                                -> new NotFoundException(AUTHOR_NOT_FOUND_MESSAGE + authorId));
                 authors.add(author);
             });
         }
@@ -83,7 +92,8 @@ public class BookService {
         if (bookDto.getCategoryIds() != null && !bookDto.getCategoryIds().isEmpty()) {
             bookDto.getCategoryIds().forEach(categoryId -> {
                 Category category = categoryRepository.findById(categoryId)
-                        .orElseThrow(() -> new NotFoundException("Book with id " + categoryId + " not found"));
+                        .orElseThrow(()
+                                -> new NotFoundException(CATEGORY_NOT_FOUND_MESSAGE + categoryId));
                 categories.add(category);
             });
         }
@@ -93,7 +103,9 @@ public class BookService {
     }
 
     public void deleteBook(Long id) {
-        bookRepository.findById(id).orElseThrow(() -> new NotFoundException("Book with id " + id + " not found"));
+        if (!bookRepository.existsById(id)) {
+            throw new NotFoundException(BOOK_NOT_FOUND_MESSAGE + id);
+        }
         bookRepository.deleteById(id);
     }
 }

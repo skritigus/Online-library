@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final BookRepository bookRepository;
+    private static final String BOOK_NOT_FOUND_MESSAGE = "Book is not found with id: ";
+    private static final String CATEGORY_NOT_FOUND_MESSAGE = "Category is not found with id: ";
 
     @Autowired
     public CategoryService(CategoryRepository categoryRepository, BookRepository bookRepository) {
@@ -27,7 +29,7 @@ public class CategoryService {
 
     public CategoryGetDto getCategoryById(Long id) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Category with id " + id + " not found"));
+                .orElseThrow(() -> new NotFoundException(CATEGORY_NOT_FOUND_MESSAGE + id));
         return CategoryMapper.toDto(category);
     }
 
@@ -36,8 +38,11 @@ public class CategoryService {
 
         Set<Book> books = new HashSet<>();
         if (categoryDto.getBookIds() != null && !categoryDto.getBookIds().isEmpty()) {
-            books = categoryDto.getBookIds().stream().map(bookId -> bookRepository.findById(bookId)
-                    .orElseThrow(() -> new NotFoundException("Book with id " + bookId + " not found"))).collect(Collectors.toSet());
+            books = categoryDto.getBookIds().stream()
+                    .map(bookId -> bookRepository.findById(bookId)
+                    .orElseThrow(()
+                            -> new NotFoundException(BOOK_NOT_FOUND_MESSAGE + bookId)))
+                    .collect(Collectors.toSet());
         }
         categoryEntity.setBooks(books);
 
@@ -46,7 +51,7 @@ public class CategoryService {
 
     public CategoryGetDto updateCategory(Long id, CategoryCreateDto categoryDto) {
         Category categoryEntity = categoryRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Category with id " + id + " not found"));
+                .orElseThrow(() -> new NotFoundException(CATEGORY_NOT_FOUND_MESSAGE + id));
 
         categoryEntity.setName(categoryDto.getName());
 
@@ -54,7 +59,7 @@ public class CategoryService {
         if (categoryDto.getBookIds() != null && !categoryDto.getBookIds().isEmpty()) {
             for (Long bookId : categoryDto.getBookIds()) {
                 Book book = bookRepository.findById(bookId)
-                        .orElseThrow(() -> new NotFoundException("Book with id " + bookId + " not found"));
+                        .orElseThrow(() -> new NotFoundException(BOOK_NOT_FOUND_MESSAGE + bookId));
                 book.getCategories().add(categoryEntity);
                 books.add(book);
             }
@@ -65,8 +70,9 @@ public class CategoryService {
     }
 
     public void deleteCategory(Long id) {
-        categoryRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Category with id " + id + " not found"));
+        if (categoryRepository.existsById(id)) {
+            throw new NotFoundException(CATEGORY_NOT_FOUND_MESSAGE + id);
+        }
         categoryRepository.deleteById(id);
     }
 }

@@ -18,30 +18,37 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final BookRepository bookRepository;
     private final UserRepository userRepository;
+    private static final String BOOK_NOT_FOUND_MESSAGE = "Book is not found with id: ";
+    private static final String REVIEW_NOT_FOUND_MESSAGE = "Review is not found with id: ";
+    private static final String USER_NOT_FOUND_MESSAGE = "User is not found with id: ";
 
     @Autowired
-    public ReviewService(ReviewRepository reviewRepository, BookRepository bookRepository, UserRepository userRepository) {
+    public ReviewService(ReviewRepository reviewRepository,
+                         BookRepository bookRepository,
+                         UserRepository userRepository) {
         this.reviewRepository = reviewRepository;
         this.bookRepository = bookRepository;
         this.userRepository = userRepository;
     }
 
     public ReviewGetDto getReviewById(Long id, Long bookId) {
-        bookRepository.findById(id).orElseThrow(() -> new NotFoundException("Book with id " + id + " not found"));
+        bookRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(BOOK_NOT_FOUND_MESSAGE + bookId));
         Review review = reviewRepository.findByIdAndBookId(id, bookId)
-                .orElseThrow(() -> new NotFoundException("Review with id " + id + " not found"));
+                .orElseThrow(() -> new NotFoundException(REVIEW_NOT_FOUND_MESSAGE + id));
         return ReviewMapper.toDto(review);
     }
 
     public ReviewGetDto createReview(Long bookId, ReviewCreateDto reviewDto) {
         Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new NotFoundException("Book with id " + bookId + " not found"));
+                .orElseThrow(() -> new NotFoundException(BOOK_NOT_FOUND_MESSAGE + bookId));
         Review review = ReviewMapper.fromDto(reviewDto);
         book.getReviews().add(review);
         review.setBook(book);
 
         User user = userRepository.findById(reviewDto.getUserId())
-                .orElseThrow(() -> new NotFoundException("User with id " + reviewDto.getUserId() + " not found"));
+                .orElseThrow(()
+                        -> new NotFoundException(USER_NOT_FOUND_MESSAGE + reviewDto.getUserId()));
         user.getReviews().add(review);
         review.setUser(user);
 
@@ -50,14 +57,15 @@ public class ReviewService {
 
     public ReviewGetDto updateReview(Long id, Long bookId, ReviewCreateDto reviewDto) {
         Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new NotFoundException("Book with id " + bookId + " not found"));
+                .orElseThrow(() -> new NotFoundException(BOOK_NOT_FOUND_MESSAGE + bookId));
         Review reviewEntity = reviewRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Review with id " + id + " not found"));
+                .orElseThrow(() -> new NotFoundException(REVIEW_NOT_FOUND_MESSAGE + id));
         reviewEntity.setComment(reviewDto.getComment());
         reviewEntity.setRating(reviewDto.getRating());
 
         User user = userRepository.findById(reviewDto.getUserId())
-                .orElseThrow(() -> new NotFoundException("User with id " + reviewDto.getUserId() + " not found"));
+                .orElseThrow(()
+                        -> new NotFoundException(USER_NOT_FOUND_MESSAGE + reviewDto.getUserId()));
         user.getReviews().add(reviewEntity);
         reviewEntity.setUser(user);
 
@@ -65,10 +73,12 @@ public class ReviewService {
     }
 
     public void deleteReview(Long id, Long bookId) {
-        bookRepository.findById(bookId)
-                .orElseThrow(() -> new NotFoundException("Book with id " + bookId + " not found"));
-        reviewRepository.findByIdAndBookId(id, bookId)
-                .orElseThrow(() -> new NotFoundException("Review with id " + id + " not found"));
+        if (!bookRepository.existsById(bookId)) {
+            throw new NotFoundException(BOOK_NOT_FOUND_MESSAGE + bookId);
+        }
+        if (!reviewRepository.existsById(bookId)) {
+            throw new NotFoundException(REVIEW_NOT_FOUND_MESSAGE + id);
+        }
         reviewRepository.deleteById(id);
     }
 }

@@ -3,7 +3,6 @@ package library.controller;
 import jakarta.validation.Valid;
 import library.dto.create.BookCreateDto;
 import library.dto.get.BookGetDto;
-import library.model.Book;
 import library.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

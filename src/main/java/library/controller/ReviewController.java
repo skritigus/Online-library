@@ -3,7 +3,6 @@ package library.controller;
 import jakarta.validation.Valid;
 import library.dto.create.ReviewCreateDto;
 import library.dto.get.ReviewGetDto;
-import library.model.Review;
 import library.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

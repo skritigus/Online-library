@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private static final String USER_NOT_FOUND_MESSAGE = "User is not found with id: ";
 
     @Autowired
     public UserService(UserRepository userRepository) {
@@ -20,7 +21,7 @@ public class UserService {
 
     public UserGetDto getUserById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("User with id " + id + " not found"));
+                .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND_MESSAGE + id));
         return UserMapper.toDto(user);
     }
 
@@ -31,7 +32,7 @@ public class UserService {
 
     public UserGetDto updateUser(Long id, UserCreateDto userDto) {
         User userEntity = userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("User with id " + id + " not found"));
+                .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND_MESSAGE + id));
         userEntity.setEmail(userDto.getEmail());
         userEntity.setPassword(userDto.getPassword());
         userEntity.setName(userDto.getName());
@@ -39,6 +40,9 @@ public class UserService {
     }
 
     public void deleteUser(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new NotFoundException(USER_NOT_FOUND_MESSAGE + id);
+        }
         userRepository.deleteById(id);
     }
 }

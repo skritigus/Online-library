@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 public class AuthorService {
     private final AuthorRepository authorRepository;
     private final BookRepository bookRepository;
+    private static final String AUTHOR_NOT_FOUND_MESSAGE = "Author is not found with id: ";
+    private static final String BOOK_NOT_FOUND_MESSAGE = "Book is not found with id: ";
 
     @Autowired
     public AuthorService(AuthorRepository authorRepository, BookRepository bookRepository) {
@@ -27,7 +29,7 @@ public class AuthorService {
 
     public AuthorGetDto getAuthorById(Long id) {
         Author author = authorRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Author with id " + id + " not found"));
+                .orElseThrow(() -> new NotFoundException(AUTHOR_NOT_FOUND_MESSAGE + id));
         return AuthorMapper.toDto(author);
     }
 
@@ -42,7 +44,7 @@ public class AuthorService {
         if (authorDto.getBookIds() != null && !authorDto.getBookIds().isEmpty()) {
             for (Long bookId : authorDto.getBookIds()) {
                 Book book = bookRepository.findById(bookId)
-                        .orElseThrow(() -> new NotFoundException("Book with id " + bookId + " not found"));
+                        .orElseThrow(() -> new NotFoundException(BOOK_NOT_FOUND_MESSAGE + bookId));
                 book.getAuthors().add(authorEntity);
                 books.add(book);
             }
@@ -54,7 +56,7 @@ public class AuthorService {
 
     public AuthorGetDto updateAuthor(Long id, AuthorCreateDto authorDto) {
         Author authorEntity = authorRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Author with id " + id + " not found"));
+                .orElseThrow(() -> new NotFoundException(AUTHOR_NOT_FOUND_MESSAGE + id));
         authorEntity.setName(authorDto.getName());
         authorEntity.setInfo(authorDto.getInfo());
 
@@ -62,7 +64,7 @@ public class AuthorService {
         if (authorDto.getBookIds() != null && !authorDto.getBookIds().isEmpty()) {
             for (Long bookId : authorDto.getBookIds()) {
                 Book book = bookRepository.findById(bookId)
-                        .orElseThrow(() -> new NotFoundException("Book with id " + bookId + " not found"));
+                        .orElseThrow(() -> new NotFoundException(BOOK_NOT_FOUND_MESSAGE + bookId));
                 book.getAuthors().add(authorEntity);
                 books.add(book);
             }
@@ -73,7 +75,9 @@ public class AuthorService {
     }
 
     public void deleteAuthor(Long id) {
-        authorRepository.findById(id).orElseThrow(() -> new NotFoundException("Author with id " + id + " not found"));
+        if (!authorRepository.existsById(id)) {
+            throw new NotFoundException(AUTHOR_NOT_FOUND_MESSAGE + id);
+        }
         authorRepository.deleteById(id);
     }
 }
