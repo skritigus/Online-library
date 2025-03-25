@@ -18,7 +18,8 @@ public class InMemoryCache {
 
         cache.put(key, value);
         Logger logger = Logger.getLogger(InMemoryCache.class.getName());
-        logger.info("Cache size: " + cache.size());
+        String message = "Cache size: " + cache.size();
+        logger.info(message);
     }
 
     public Object get(String key) {
