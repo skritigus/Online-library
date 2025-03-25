@@ -1,6 +1,7 @@
 package library.controller;
 
 import jakarta.validation.Valid;
+import java.util.List;
 import library.dto.create.AuthorCreateDto;
 import library.dto.get.AuthorGetDto;
 import library.service.AuthorService;
@@ -29,6 +30,11 @@ public class AuthorController {
     @GetMapping("/{id}")
     public ResponseEntity<AuthorGetDto> getAuthorById(@PathVariable Long id) {
         return ResponseEntity.ok(authorService.getAuthorById(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<AuthorGetDto>> getAllAuthors() {
+        return ResponseEntity.ok(authorService.getAllAuthors());
     }
 
     @PostMapping

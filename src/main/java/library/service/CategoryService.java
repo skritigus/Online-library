@@ -1,5 +1,6 @@
 package library.service;
 
+import jakarta.transaction.Transactional;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -33,6 +34,7 @@ public class CategoryService {
         return CategoryMapper.toDto(category);
     }
 
+    @Transactional
     public CategoryGetDto createCategory(CategoryCreateDto categoryDto) {
         Category categoryEntity = CategoryMapper.fromDto(categoryDto);
 
@@ -49,6 +51,7 @@ public class CategoryService {
         return CategoryMapper.toDto(categoryRepository.save(categoryEntity));
     }
 
+    @Transactional
     public CategoryGetDto updateCategory(Long id, CategoryCreateDto categoryDto) {
         Category categoryEntity = categoryRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(CATEGORY_NOT_FOUND_MESSAGE + id));

@@ -1,5 +1,6 @@
 package library.service;
 
+import jakarta.transaction.Transactional;
 import library.dto.create.ReviewCreateDto;
 import library.dto.get.ReviewGetDto;
 import library.exception.NotFoundException;
@@ -32,7 +33,7 @@ public class ReviewService {
     }
 
     public ReviewGetDto getReviewById(Long id, Long bookId) {
-        if (!bookRepository.existsById(id)) {
+        if (!bookRepository.existsById(bookId)) {
             throw new NotFoundException(BOOK_NOT_FOUND_MESSAGE + bookId);
         }
         Review review = reviewRepository.findByIdAndBookId(id, bookId)
@@ -40,6 +41,7 @@ public class ReviewService {
         return ReviewMapper.toDto(review);
     }
 
+    @Transactional
     public ReviewGetDto createReview(Long bookId, ReviewCreateDto reviewDto) {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new NotFoundException(BOOK_NOT_FOUND_MESSAGE + bookId));
@@ -56,6 +58,7 @@ public class ReviewService {
         return ReviewMapper.toDto(reviewRepository.save(review));
     }
 
+    @Transactional
     public ReviewGetDto updateReview(Long id, Long bookId, ReviewCreateDto reviewDto) {
         if (!bookRepository.existsById(bookId)) {
             throw new NotFoundException(BOOK_NOT_FOUND_MESSAGE + bookId);

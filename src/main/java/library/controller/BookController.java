@@ -1,6 +1,7 @@
 package library.controller;
 
 import jakarta.validation.Valid;
+import java.util.List;
 import library.dto.create.BookCreateDto;
 import library.dto.get.BookGetDto;
 import library.service.BookService;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -29,6 +31,26 @@ public class BookController {
     @GetMapping("/{id}")
     public ResponseEntity<BookGetDto> getBookById(@PathVariable Long id) {
         return ResponseEntity.ok(bookService.getBookById(id));
+    }
+
+    @GetMapping("/search/author")
+    public ResponseEntity<List<BookGetDto>> getBookByAuthor(@RequestParam String name) {
+        return ResponseEntity.ok(bookService.getBookByAuthor(name));
+    }
+
+    @GetMapping("/search/category")
+    public ResponseEntity<List<BookGetDto>> getBookByCategory(@RequestParam String name) {
+        return ResponseEntity.ok(bookService.getBookByCategory(name));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<BookGetDto>> getBookByName(@RequestParam String name) {
+        return ResponseEntity.ok(bookService.getBookByName(name));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<BookGetDto>> getAllBooks() {
+        return ResponseEntity.ok(bookService.getAllBooks());
     }
 
     @PostMapping

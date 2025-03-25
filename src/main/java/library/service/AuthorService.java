@@ -1,5 +1,6 @@
 package library.service;
 
+import jakarta.transaction.Transactional;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -37,6 +38,7 @@ public class AuthorService {
         return authorRepository.findAuthorsByName(name);
     }
 
+    @Transactional
     public AuthorGetDto createAuthor(AuthorCreateDto authorDto) {
         Author authorEntity = AuthorMapper.fromDto(authorDto);
 
@@ -54,6 +56,7 @@ public class AuthorService {
         return AuthorMapper.toDto(authorRepository.save(authorEntity));
     }
 
+    @Transactional
     public AuthorGetDto updateAuthor(Long id, AuthorCreateDto authorDto) {
         Author authorEntity = authorRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(AUTHOR_NOT_FOUND_MESSAGE + id));
@@ -79,5 +82,10 @@ public class AuthorService {
             throw new NotFoundException(AUTHOR_NOT_FOUND_MESSAGE + id);
         }
         authorRepository.deleteById(id);
+    }
+
+    public List<AuthorGetDto> getAllAuthors() {
+        return authorRepository.findAll().stream().map(AuthorMapper::toDto)
+                .toList();
     }
 }

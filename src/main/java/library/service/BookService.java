@@ -1,9 +1,11 @@
 package library.service;
 
+import jakarta.transaction.Transactional;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import library.cache.InMemoryCache;
 import library.dto.create.BookCreateDto;
 import library.dto.get.BookGetDto;
 import library.exception.NotFoundException;
@@ -22,6 +24,7 @@ public class BookService {
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
     private final CategoryRepository categoryRepository;
+    private final InMemoryCache cache;
     private static final String AUTHOR_NOT_FOUND_MESSAGE = "Author is not found with id: ";
     private static final String BOOK_NOT_FOUND_MESSAGE = "Book is not found with id: ";
     private static final String CATEGORY_NOT_FOUND_MESSAGE = "Category is not found with id: ";
@@ -29,22 +32,55 @@ public class BookService {
     @Autowired
     public BookService(BookRepository bookRepository,
                        AuthorRepository authorRepository,
-                       CategoryRepository categoryRepository) {
+                       CategoryRepository categoryRepository, InMemoryCache cache) {
         this.bookRepository = bookRepository;
         this.authorRepository = authorRepository;
         this.categoryRepository = categoryRepository;
+        this.cache = cache;
     }
 
     public BookGetDto getBookById(Long id) {
-        Book book = bookRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(BOOK_NOT_FOUND_MESSAGE + id));
-        return BookMapper.toDto(book);
+        String key = "book_by_id_" + id;
+        if (cache.containsKey(key)) {
+            return (BookGetDto) cache.get(key);
+        }
+        BookGetDto book = BookMapper.toDto(bookRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(BOOK_NOT_FOUND_MESSAGE + id)));
+        cache.put(key, book);
+        return book;
     }
 
-    public List<Book> getBookByName(String name)  {
-        return bookRepository.findBooksByName(name);
+    public List<BookGetDto> getBookByName(String name)  {
+        String key = "book_by_name_" + name;
+        if (cache.containsKey(key)) {
+            return (List<BookGetDto>) cache.get(key);
+        }
+
+        List<BookGetDto> booksDto = bookRepository.findByName(name).stream()
+                .map(BookMapper::toDto).toList();
+        if (booksDto.isEmpty()) {
+            throw new NotFoundException(BOOK_NOT_FOUND_MESSAGE + name);
+        }
+        cache.put(key, booksDto);
+        return booksDto;
     }
 
+    public List<BookGetDto> getBookByAuthor(String name)  {
+        String key = "book_by_author_" + name;
+        if (cache.containsKey(key)) {
+            return (List<BookGetDto>) cache.get(key);
+        }
+
+        List<BookGetDto> booksDto = bookRepository.findByAuthor(name).stream()
+                .map(BookMapper::toDto).toList();
+        if (booksDto.isEmpty()) {
+            throw new NotFoundException(BOOK_NOT_FOUND_MESSAGE + name);
+        }
+        cache.put(key, booksDto);
+        return booksDto;
+    }
+
+    @Transactional
     public BookGetDto createBook(BookCreateDto bookDto) {
         Book bookEntity = BookMapper.fromDto(bookDto);
 
@@ -70,6 +106,7 @@ public class BookService {
         return BookMapper.toDto(bookRepository.save(bookEntity));
     }
 
+    @Transactional
     public BookGetDto updateBook(Long id, BookCreateDto bookDto) {
         Book bookEntity = bookRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(BOOK_NOT_FOUND_MESSAGE + id));
@@ -98,6 +135,7 @@ public class BookService {
             });
         }
         bookEntity.setCategories(categories);
+        cache.clear();
 
         return BookMapper.toDto(bookRepository.save(bookEntity));
     }
@@ -106,6 +144,26 @@ public class BookService {
         if (!bookRepository.existsById(id)) {
             throw new NotFoundException(BOOK_NOT_FOUND_MESSAGE + id);
         }
+        cache.clear();
         bookRepository.deleteById(id);
+    }
+
+    public List<BookGetDto> getAllBooks() {
+        return bookRepository.findAll().stream().map(BookMapper::toDto).toList();
+    }
+
+    public List<BookGetDto> getBookByCategory(String name) {
+        String key = "book_by_category_" + name;
+        if (cache.containsKey(key)) {
+            return (List<BookGetDto>) cache.get(key);
+        }
+
+        List<BookGetDto> booksDto = bookRepository.findByCategory(name).stream()
+                .map(BookMapper::toDto).toList();
+        if (booksDto.isEmpty()) {
+            throw new NotFoundException(BOOK_NOT_FOUND_MESSAGE + name);
+        }
+        cache.put(key, booksDto);
+        return booksDto;
     }
 }
