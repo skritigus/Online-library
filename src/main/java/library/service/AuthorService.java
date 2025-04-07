@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import library.cache.InMemoryCache;
 import library.dto.create.AuthorCreateDto;
 import library.dto.get.AuthorGetDto;
 import library.exception.NotFoundException;
@@ -21,11 +22,14 @@ public class AuthorService {
     private final BookRepository bookRepository;
     private static final String AUTHOR_NOT_FOUND_MESSAGE = "Author is not found with id: ";
     private static final String BOOK_NOT_FOUND_MESSAGE = "Book is not found with id: ";
+    private final InMemoryCache cache;
 
     @Autowired
-    public AuthorService(AuthorRepository authorRepository, BookRepository bookRepository) {
+    public AuthorService(AuthorRepository authorRepository, BookRepository bookRepository,
+                         InMemoryCache cache) {
         this.authorRepository = authorRepository;
         this.bookRepository = bookRepository;
+        this.cache = cache;
     }
 
     public AuthorGetDto getAuthorById(Long id) {
@@ -34,11 +38,6 @@ public class AuthorService {
         return AuthorMapper.toDto(author);
     }
 
-    public List<Author> getAuthorByName(String name)  {
-        return authorRepository.findAuthorsByName(name);
-    }
-
-    @Transactional
     public AuthorGetDto createAuthor(AuthorCreateDto authorDto) {
         Author authorEntity = AuthorMapper.fromDto(authorDto);
 
@@ -52,6 +51,7 @@ public class AuthorService {
             }
         }
         authorEntity.setBooks(books);
+        cache.clear();
 
         return AuthorMapper.toDto(authorRepository.save(authorEntity));
     }
@@ -73,15 +73,18 @@ public class AuthorService {
             }
         }
         authorEntity.setBooks(books);
+        cache.clear();
 
         return AuthorMapper.toDto(authorRepository.save(authorEntity));
     }
 
+    @Transactional
     public void deleteAuthor(Long id) {
         if (!authorRepository.existsById(id)) {
             throw new NotFoundException(AUTHOR_NOT_FOUND_MESSAGE + id);
         }
         authorRepository.deleteById(id);
+        cache.clear();
     }
 
     public List<AuthorGetDto> getAllAuthors() {

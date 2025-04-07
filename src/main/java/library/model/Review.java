@@ -26,9 +26,11 @@ public class Review {
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id", nullable = false)
+    //@JsonBackReference
     private Book book;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    //@JsonBackReference
     private User user;
     @Column(name = "rating", nullable = false)
     private int rating;

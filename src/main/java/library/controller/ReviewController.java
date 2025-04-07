@@ -1,5 +1,10 @@
 package library.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import library.dto.create.ReviewCreateDto;
 import library.dto.get.ReviewGetDto;
@@ -18,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/books/{bookId}/reviews")
+@Tag(name = "Review", description = "API for managing reviews")
 public class ReviewController {
     private final ReviewService reviewService;
 
@@ -26,28 +32,60 @@ public class ReviewController {
         this.reviewService = reviewService;
     }
 
+    @Operation(summary = "Get book's review by ID",
+            description = "Retrieves existing review of book")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Review updated successfully"),
+        @ApiResponse(responseCode = "404", description = "Book or review not found")
+    })
     @GetMapping("/{id}")
-    public ResponseEntity<ReviewGetDto> getReviewById(@PathVariable Long id,
-                                                      @PathVariable Long bookId) {
+    public ResponseEntity<ReviewGetDto> getReviewById(
+            @Parameter(description = "Review's ID", example = "2") @PathVariable Long id,
+            @Parameter(description = "Book's ID", example = "2") @PathVariable Long bookId) {
         return ResponseEntity.ok(reviewService.getReviewById(id, bookId));
     }
 
+    @Operation(summary = "Create book's review",
+            description = "Creates review for book")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Review created successfully"),
+        @ApiResponse(responseCode = "400", description = "Incorrect entered data"),
+        @ApiResponse(responseCode = "404", description = "Book not found")
+    })
     @PostMapping
-    public ResponseEntity<ReviewGetDto> createReview(@PathVariable Long bookId,
-                                                     @Valid @RequestBody ReviewCreateDto review) {
+    public ResponseEntity<ReviewGetDto> createReview(
+            @Parameter(description = "Book's ID", example = "2") @PathVariable Long bookId,
+            @Parameter(description = "Data to create review")
+            @Valid @RequestBody ReviewCreateDto review) {
         return new ResponseEntity<>(reviewService.createReview(bookId, review), HttpStatus.CREATED);
     }
 
+    @Operation(summary = "Update book's review by ID",
+            description = "Update existing review of book")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Review updated successfully"),
+        @ApiResponse(responseCode = "400", description = "Incorrect entered data"),
+        @ApiResponse(responseCode = "404", description = "Book or review not found")
+    })
     @PutMapping("/{id}")
-    public ResponseEntity<ReviewGetDto> updateReview(@PathVariable Long id,
-                                                     @PathVariable Long bookId,
-                                                     @Valid @RequestBody ReviewCreateDto review) {
+    public ResponseEntity<ReviewGetDto> updateReview(
+            @Parameter(description = "Review's ID", example = "2") @PathVariable Long id,
+            @Parameter(description = "Book's ID", example = "2") @PathVariable Long bookId,
+            @Parameter(description = "Data to update review")
+            @Valid @RequestBody ReviewCreateDto review) {
         return ResponseEntity.ok(reviewService.updateReview(id, bookId, review));
     }
 
+    @Operation(summary = "Delete book's review by ID",
+            description = "Delete existing review of book")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "204", description = "Review deleted successfully"),
+        @ApiResponse(responseCode = "404", description = "Book or review not found")
+    })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteReview(@PathVariable Long id,
-                                               @PathVariable Long bookId) {
+    public ResponseEntity<Void> deleteReview(
+            @Parameter(description = "Review's ID", example = "2") @PathVariable Long id,
+            @Parameter(description = "Book's ID", example = "2") @PathVariable Long bookId) {
         reviewService.deleteReview(id, bookId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

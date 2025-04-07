@@ -1,13 +1,13 @@
 package library.cache;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 import org.springframework.stereotype.Component;
 
 @Component
 public class InMemoryCache {
-    private final Map<String, Object> cache = new HashMap<>();
+    private final Map<String, Object> cache = new LinkedHashMap<>();
     private static final int MAX_SIZE = 100;
 
     public void put(String key, Object value) {

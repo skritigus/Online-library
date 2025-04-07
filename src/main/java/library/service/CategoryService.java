@@ -2,8 +2,9 @@ package library.service;
 
 import jakarta.transaction.Transactional;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
+import library.cache.InMemoryCache;
 import library.dto.create.CategoryCreateDto;
 import library.dto.get.CategoryGetDto;
 import library.exception.NotFoundException;
@@ -21,11 +22,15 @@ public class CategoryService {
     private final BookRepository bookRepository;
     private static final String BOOK_NOT_FOUND_MESSAGE = "Book is not found with id: ";
     private static final String CATEGORY_NOT_FOUND_MESSAGE = "Category is not found with id: ";
+    private final InMemoryCache cache;
 
     @Autowired
-    public CategoryService(CategoryRepository categoryRepository, BookRepository bookRepository) {
+    public CategoryService(CategoryRepository categoryRepository,
+                           BookRepository bookRepository,
+                           InMemoryCache cache) {
         this.categoryRepository = categoryRepository;
         this.bookRepository = bookRepository;
+        this.cache = cache;
     }
 
     public CategoryGetDto getCategoryById(Long id) {
@@ -40,13 +45,16 @@ public class CategoryService {
 
         Set<Book> books = new HashSet<>();
         if (categoryDto.getBookIds() != null && !categoryDto.getBookIds().isEmpty()) {
-            books = categoryDto.getBookIds().stream()
-                    .map(bookId -> bookRepository.findById(bookId)
-                    .orElseThrow(()
-                            -> new NotFoundException(BOOK_NOT_FOUND_MESSAGE + bookId)))
-                    .collect(Collectors.toSet());
+            for (Long bookId : categoryDto.getBookIds()) {
+                Book book = bookRepository.findById(bookId)
+                        .orElseThrow(()
+                                -> new NotFoundException(BOOK_NOT_FOUND_MESSAGE + bookId));
+                book.getCategories().add(categoryEntity);
+                books.add(book);
+            }
         }
         categoryEntity.setBooks(books);
+        cache.clear();
 
         return CategoryMapper.toDto(categoryRepository.save(categoryEntity));
     }
@@ -68,6 +76,7 @@ public class CategoryService {
             }
         }
         categoryEntity.setBooks(books);
+        cache.clear();
 
         return CategoryMapper.toDto(categoryRepository.save(categoryEntity));
     }
@@ -77,5 +86,10 @@ public class CategoryService {
             throw new NotFoundException(CATEGORY_NOT_FOUND_MESSAGE + id);
         }
         categoryRepository.deleteById(id);
+        cache.clear();
+    }
+
+    public List<CategoryGetDto> getAllCategories() {
+        return categoryRepository.findAll().stream().map(CategoryMapper::toDto).toList();
     }
 }

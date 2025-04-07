@@ -1,5 +1,6 @@
 package library.service;
 
+import java.util.List;
 import library.dto.create.UserCreateDto;
 import library.dto.get.UserGetDto;
 import library.exception.NotFoundException;
@@ -44,5 +45,10 @@ public class UserService {
             throw new NotFoundException(USER_NOT_FOUND_MESSAGE + id);
         }
         userRepository.deleteById(id);
+    }
+
+    public List<UserGetDto> getAllUsers() {
+        return userRepository.findAll().stream().map(UserMapper::toDto)
+                .toList();
     }
 }

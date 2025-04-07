@@ -54,9 +54,12 @@ public class Book {
     private int pageAmount;
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL,
             fetch = FetchType.LAZY, orphanRemoval = true)
+    //@JsonManagedReference
     private List<Review> reviews;
     @Column(name = "year")
     private int year;
     @Column(name = "rating")
     private Double rating;
+    @ManyToMany(mappedBy = "favouriteBooks")
+    private Set<User> users;
 }

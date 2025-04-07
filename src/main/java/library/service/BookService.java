@@ -59,14 +59,14 @@ public class BookService {
         List<BookGetDto> booksDto = bookRepository.findByName(name).stream()
                 .map(BookMapper::toDto).toList();
         if (booksDto.isEmpty()) {
-            throw new NotFoundException(BOOK_NOT_FOUND_MESSAGE + name);
+            throw new NotFoundException("Book not found with name:" + name);
         }
         cache.put(key, booksDto);
         return booksDto;
     }
 
     public List<BookGetDto> getBookByAuthor(String name)  {
-        String key = "book_by_author_" + name;
+        String key = "books_by_author_" + name;
         if (cache.containsKey(key)) {
             return (List<BookGetDto>) cache.get(key);
         }
@@ -74,7 +74,7 @@ public class BookService {
         List<BookGetDto> booksDto = bookRepository.findByAuthor(name).stream()
                 .map(BookMapper::toDto).toList();
         if (booksDto.isEmpty()) {
-            throw new NotFoundException(BOOK_NOT_FOUND_MESSAGE + name);
+            throw new NotFoundException("Book not found with author's name:" + name);
         }
         cache.put(key, booksDto);
         return booksDto;
@@ -102,6 +102,7 @@ public class BookService {
         }
         bookEntity.setCategories(categories);
         bookEntity.setAuthors(authors);
+        cache.clear();
 
         return BookMapper.toDto(bookRepository.save(bookEntity));
     }
@@ -161,7 +162,7 @@ public class BookService {
         List<BookGetDto> booksDto = bookRepository.findByCategory(name).stream()
                 .map(BookMapper::toDto).toList();
         if (booksDto.isEmpty()) {
-            throw new NotFoundException(BOOK_NOT_FOUND_MESSAGE + name);
+            throw new NotFoundException("Book not found with category's name:" + name);
         }
         cache.put(key, booksDto);
         return booksDto;
