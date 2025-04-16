@@ -10,5 +10,4 @@ public class ReviewGetDto {
     private UserGetDto user;
     private int rating;
     private String comment;
-    private BookGetDto book;
 }

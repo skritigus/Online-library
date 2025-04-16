@@ -20,6 +20,11 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    public List<UserGetDto> getAllUsers() {
+        return userRepository.findAll().stream().map(UserMapper::toDto)
+                .toList();
+    }
+
     public UserGetDto getUserById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND_MESSAGE + id));
@@ -45,10 +50,5 @@ public class UserService {
             throw new NotFoundException(USER_NOT_FOUND_MESSAGE + id);
         }
         userRepository.deleteById(id);
-    }
-
-    public List<UserGetDto> getAllUsers() {
-        return userRepository.findAll().stream().map(UserMapper::toDto)
-                .toList();
     }
 }

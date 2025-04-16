@@ -35,7 +35,8 @@ public class LoggingAspect {
         }
     }
 
-    @AfterThrowing(pointcut = "servicesPointcut()", throwing = "exception")
+    @AfterThrowing(pointcut = "servicesPointcut()",
+            throwing = "exception")
     public void logAfterThrowing(JoinPoint joinPoint, Throwable exception) {
         if (logger.isErrorEnabled()) {
             logger.error("Error in method: {}. Error: {}",

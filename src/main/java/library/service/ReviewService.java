@@ -1,6 +1,7 @@
 package library.service;
 
 import jakarta.transaction.Transactional;
+import java.util.ArrayList;
 import library.dto.create.ReviewCreateDto;
 import library.dto.get.ReviewGetDto;
 import library.exception.NotFoundException;
@@ -46,43 +47,46 @@ public class ReviewService {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new NotFoundException(BOOK_NOT_FOUND_MESSAGE + bookId));
         Review review = ReviewMapper.fromDto(reviewDto);
+
         book.getReviews().add(review);
         review.setBook(book);
 
         User user = userRepository.findById(reviewDto.getUserId())
                 .orElseThrow(()
                         -> new NotFoundException(USER_NOT_FOUND_MESSAGE + reviewDto.getUserId()));
+
         user.getReviews().add(review);
         review.setUser(user);
 
         return ReviewMapper.toDto(reviewRepository.save(review));
     }
 
-    @Transactional
+    @Transactional 
     public ReviewGetDto updateReview(Long id, Long bookId, ReviewCreateDto reviewDto) {
         if (!bookRepository.existsById(bookId)) {
             throw new NotFoundException(BOOK_NOT_FOUND_MESSAGE + bookId);
         }
 
-        Review reviewEntity = reviewRepository.findById(id)
+        Review review = reviewRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(REVIEW_NOT_FOUND_MESSAGE + id));
-        reviewEntity.setComment(reviewDto.getComment());
-        reviewEntity.setRating(reviewDto.getRating());
+        review.setComment(reviewDto.getComment());
+        review.setRating(reviewDto.getRating());
 
         User user = userRepository.findById(reviewDto.getUserId())
                 .orElseThrow(()
                         -> new NotFoundException(USER_NOT_FOUND_MESSAGE + reviewDto.getUserId()));
-        user.getReviews().add(reviewEntity);
-        reviewEntity.setUser(user);
 
-        return ReviewMapper.toDto(reviewRepository.save(reviewEntity));
+        user.getReviews().add(review);
+        review.setUser(user);
+
+        return ReviewMapper.toDto(reviewRepository.save(review));
     }
 
     public void deleteReview(Long id, Long bookId) {
         if (!bookRepository.existsById(bookId)) {
             throw new NotFoundException(BOOK_NOT_FOUND_MESSAGE + bookId);
         }
-        if (!reviewRepository.existsById(bookId)) {
+        if (!reviewRepository.existsById(id)) {
             throw new NotFoundException(REVIEW_NOT_FOUND_MESSAGE + id);
         }
         reviewRepository.deleteById(id);

@@ -33,6 +33,10 @@ public class CategoryService {
         this.cache = cache;
     }
 
+    public List<CategoryGetDto> getAllCategories() {
+        return categoryRepository.findAll().stream().map(CategoryMapper::toDto).toList();
+    }
+
     public CategoryGetDto getCategoryById(Long id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(CATEGORY_NOT_FOUND_MESSAGE + id));
@@ -87,9 +91,5 @@ public class CategoryService {
         }
         categoryRepository.deleteById(id);
         cache.clear();
-    }
-
-    public List<CategoryGetDto> getAllCategories() {
-        return categoryRepository.findAll().stream().map(CategoryMapper::toDto).toList();
     }
 }

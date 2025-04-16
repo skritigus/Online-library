@@ -32,6 +32,11 @@ public class AuthorService {
         this.cache = cache;
     }
 
+    public List<AuthorGetDto> getAllAuthors() {
+        return authorRepository.findAll().stream().map(AuthorMapper::toDto)
+                .toList();
+    }
+
     public AuthorGetDto getAuthorById(Long id) {
         Author author = authorRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(AUTHOR_NOT_FOUND_MESSAGE + id));
@@ -39,21 +44,21 @@ public class AuthorService {
     }
 
     public AuthorGetDto createAuthor(AuthorCreateDto authorDto) {
-        Author authorEntity = AuthorMapper.fromDto(authorDto);
+        Author author = AuthorMapper.fromDto(authorDto);
 
         Set<Book> books = new HashSet<>();
         if (authorDto.getBookIds() != null && !authorDto.getBookIds().isEmpty()) {
             for (Long bookId : authorDto.getBookIds()) {
                 Book book = bookRepository.findById(bookId)
                         .orElseThrow(() -> new NotFoundException(BOOK_NOT_FOUND_MESSAGE + bookId));
-                book.getAuthors().add(authorEntity);
+                book.getAuthors().add(author);
                 books.add(book);
             }
         }
-        authorEntity.setBooks(books);
+        author.setBooks(books);
         cache.clear();
 
-        return AuthorMapper.toDto(authorRepository.save(authorEntity));
+        return AuthorMapper.toDto(authorRepository.save(author));
     }
 
     @Transactional
@@ -85,10 +90,5 @@ public class AuthorService {
         }
         authorRepository.deleteById(id);
         cache.clear();
-    }
-
-    public List<AuthorGetDto> getAllAuthors() {
-        return authorRepository.findAll().stream().map(AuthorMapper::toDto)
-                .toList();
     }
 }

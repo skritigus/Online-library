@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import library.dto.create.BookCreateDto;
+import library.dto.create.BulkCreateDto;
 import library.dto.get.BookGetDto;
 import library.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,12 +94,27 @@ public class BookController {
     @Operation(summary = "Create book", description = "Creates new book")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Book created successfully"),
-        @ApiResponse(responseCode = "400", description = "Incorrect entered data"),
+        @ApiResponse(responseCode = "400", description = "Incorrect entered data")
     })
     @PostMapping
     public ResponseEntity<BookGetDto> createBook(@Parameter(description = "Data to create book")
                                                      @Valid @RequestBody BookCreateDto book) {
         return new ResponseEntity<>(bookService.createBook(book), HttpStatus.CREATED);
+    }
+
+    @Operation(summary = "Create many books", description = "Creates many books at once")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Books created successfully"),
+        @ApiResponse(responseCode = "400", description = "Incorrect entered data")
+    })
+    @PostMapping("/bulk")
+    public ResponseEntity<List<BookGetDto>> createBooks(
+            @Parameter(description = "Data to create books")
+            @Valid @RequestBody
+            BulkCreateDto<BookCreateDto> books) {
+        return new ResponseEntity<>(books.getDtos().stream().map(
+                bookCreateDto -> bookService.createBook(bookCreateDto))
+                .toList(), HttpStatus.CREATED);
     }
 
     @Operation(summary = "Update book by ID", description = "Update existing book")

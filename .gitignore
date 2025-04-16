@@ -6,6 +6,7 @@ target/
 /mvnw
 *.cmd
 *.iml
+htmlReport/
 
 # Compiled class file
 *.class

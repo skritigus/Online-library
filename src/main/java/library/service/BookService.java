@@ -39,6 +39,10 @@ public class BookService {
         this.cache = cache;
     }
 
+    public List<BookGetDto> getAllBooks() {
+        return bookRepository.findAll().stream().map(BookMapper::toDto).toList();
+    }
+
     public BookGetDto getBookById(Long id) {
         String key = "book_by_id_" + id;
         if (cache.containsKey(key)) {
@@ -51,7 +55,7 @@ public class BookService {
     }
 
     public List<BookGetDto> getBookByName(String name)  {
-        String key = "book_by_name_" + name;
+        String key = "books_by_name_" + name;
         if (cache.containsKey(key)) {
             return (List<BookGetDto>) cache.get(key);
         }
@@ -74,7 +78,22 @@ public class BookService {
         List<BookGetDto> booksDto = bookRepository.findByAuthor(name).stream()
                 .map(BookMapper::toDto).toList();
         if (booksDto.isEmpty()) {
-            throw new NotFoundException("Book not found with author's name:" + name);
+            throw new NotFoundException("Book not found with author's name: " + name);
+        }
+        cache.put(key, booksDto);
+        return booksDto;
+    }
+
+    public List<BookGetDto> getBookByCategory(String name) {
+        String key = "books_by_category_" + name;
+        if (cache.containsKey(key)) {
+            return (List<BookGetDto>) cache.get(key);
+        }
+
+        List<BookGetDto> booksDto = bookRepository.findByCategory(name).stream()
+                .map(BookMapper::toDto).toList();
+        if (booksDto.isEmpty()) {
+            throw new NotFoundException("Book not found with category's name: " + name);
         }
         cache.put(key, booksDto);
         return booksDto;
@@ -147,24 +166,5 @@ public class BookService {
         }
         cache.clear();
         bookRepository.deleteById(id);
-    }
-
-    public List<BookGetDto> getAllBooks() {
-        return bookRepository.findAll().stream().map(BookMapper::toDto).toList();
-    }
-
-    public List<BookGetDto> getBookByCategory(String name) {
-        String key = "book_by_category_" + name;
-        if (cache.containsKey(key)) {
-            return (List<BookGetDto>) cache.get(key);
-        }
-
-        List<BookGetDto> booksDto = bookRepository.findByCategory(name).stream()
-                .map(BookMapper::toDto).toList();
-        if (booksDto.isEmpty()) {
-            throw new NotFoundException("Book not found with category's name:" + name);
-        }
-        cache.put(key, booksDto);
-        return booksDto;
     }
 }

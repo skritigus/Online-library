@@ -9,8 +9,8 @@ public class SwaggerConf {
     public OpenAPI customOpenApi() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Music Catalog API")
+                        .title("Library Swagger API")
                         .version("1.0")
-                        .description("API для упраления музыкой"));
+                        .description("API for managing library"));
     }
 }
