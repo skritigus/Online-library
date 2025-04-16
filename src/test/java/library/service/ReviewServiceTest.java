@@ -176,12 +176,13 @@ class ReviewServiceTest {
     void updateReview_WhenReviewNotFound_ThrowsException() {
         ReviewCreateDto reviewDto = new ReviewCreateDto(1L, 4, "Updated Comment");
 
-        when(bookRepository.existsById(20L)).thenReturn(false);
+        when(bookRepository.existsById(1L)).thenReturn(true);
+        when(reviewRepository.findById(20L)).thenReturn(Optional.empty());
 
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> reviewService.updateReview(1L, 20L, reviewDto));
-        assertEquals("Book is not found with id: " + 20L, exception.getMessage());
-        verify(bookRepository).existsById(20L);
-        verify(reviewRepository, never()).findById(anyLong());
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> reviewService.updateReview(20L, 1L, reviewDto));
+        assertEquals("Review is not found with id: " + 20L, exception.getMessage());
+        verify(bookRepository).existsById(1L);
+        verify(reviewRepository).findById(20L);
         verify(userRepository, never()).findById(anyLong());
     }
 

@@ -141,7 +141,6 @@ class CategoryServiceTest {
         categoryDto.setName("New Category");
         categoryDto.setBookIds(List.of(1L));
 
-        //when(CategoryMapper.fromDto(categoryDto)).thenReturn(new Category());
         when(bookRepository.findById(1L)).thenReturn(Optional.empty());
 
         NotFoundException exception = assertThrows(NotFoundException.class, () -> categoryService.createCategory(categoryDto));
