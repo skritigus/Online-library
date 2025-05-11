@@ -41,8 +41,10 @@ class CategoryServiceTest {
     @InjectMocks
     private CategoryService categoryService;
 
-    private final Book bookTest = new Book(1L, "Test Book", null, null, 0, null, 0, null, null);
-    private final Category categoryTest = new Category(1L, "Test Category", Set.of(bookTest));
+    private final Book bookTest = new Book(1L, "Test Book",
+            null, null, 0, null, 0, null, null);
+    private final Category categoryTest = new Category(1L,
+            "Test Category", Set.of(bookTest));
 
     @Test
     void getAllCategories_shouldReturnAllCategories() {
@@ -75,7 +77,8 @@ class CategoryServiceTest {
     void getCategoryById_WhenNotFound_ThrowsException() {
         when(categoryRepository.findById(1L)).thenReturn(Optional.empty());
 
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> categoryService.getCategoryById(1L));
+        NotFoundException exception = assertThrows(NotFoundException.class,
+                () -> categoryService.getCategoryById(1L));
         assertEquals("Category is not found with id: " + 1L, exception.getMessage());
         verify(categoryRepository).findById(1L);
     }
@@ -83,8 +86,10 @@ class CategoryServiceTest {
     @Test
     void createCategory_WithValidInput_CreatesCategory() {
         CategoryCreateDto categoryDto = new CategoryCreateDto("New Category", List.of(1L, 2L));
-        Book book1 = new Book(1L, "Test Book 1", null, new HashSet<>(), 0, null, 0, null, null);
-        Book book2 = new Book(1L, "Test Book 2", null, new HashSet<>(), 0, null, 0, null, null);
+        Book book1 = new Book(1L, "Test Book 1", null,
+                new HashSet<>(), 0, null, 0, null, null);
+        Book book2 = new Book(1L, "Test Book 2", null,
+                new HashSet<>(), 0, null, 0, null, null);
 
         Category savedCategory = new Category(2L, categoryDto.getName(), Set.of(book1, book2));
 
@@ -143,7 +148,8 @@ class CategoryServiceTest {
 
         when(bookRepository.findById(1L)).thenReturn(Optional.empty());
 
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> categoryService.createCategory(categoryDto));
+        NotFoundException exception = assertThrows(NotFoundException.class,
+                () -> categoryService.createCategory(categoryDto));
         assertEquals("Book is not found with id: " + 1L, exception.getMessage());
         verify(bookRepository).findById(1L);
         verify(cache, never()).clear();
@@ -180,7 +186,8 @@ class CategoryServiceTest {
 
         when(categoryRepository.findById(1L)).thenReturn(Optional.empty());
 
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> categoryService.updateCategory(1L, categoryDto));
+        NotFoundException exception = assertThrows(NotFoundException.class,
+                () -> categoryService.updateCategory(1L, categoryDto));
         assertEquals("Category is not found with id: " + 1L, exception.getMessage());
         verify(categoryRepository).findById(1L);
     }
@@ -200,7 +207,8 @@ class CategoryServiceTest {
     void deleteCategory_WhenNotFound_ThrowsException() {
         when(categoryRepository.existsById(20L)).thenReturn(false);
 
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> categoryService.deleteCategory(20L));
+        NotFoundException exception = assertThrows(NotFoundException.class,
+                () -> categoryService.deleteCategory(20L));
         assertEquals("Category is not found with id: " + 20L, exception.getMessage());
         verify(categoryRepository).existsById(20L);
         verify(categoryRepository, never()).deleteById(20L);

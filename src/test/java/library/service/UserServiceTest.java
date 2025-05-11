@@ -10,7 +10,6 @@ import library.model.Book;
 import library.model.Review;
 import library.model.User;
 import library.repository.UserRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -34,9 +33,12 @@ class UserServiceTest {
     @InjectMocks
     private UserService userService;
 
-    private final Book bookTest = new Book(1L, "Test Book", null, null, 100, null, 1000, null, null);
-    private final Review reviewTest = new Review(1L, bookTest, null, 2, "Comment");
-    private final User userTest = new User(1L, "Test User", "Password", "email@gmail.com", List.of(reviewTest), Set.of(bookTest));
+    private final Book bookTest = new Book(1L, "Test Book",
+            null, null, 100, null, 1000, null, null);
+    private final Review reviewTest = new Review(1L, bookTest,
+            null, 2, "Comment");
+    private final User userTest = new User(1L, "Test User",
+            "Password", "email@gmail.com", List.of(reviewTest), Set.of(bookTest));
 
     @Test
     void getUserById_WhenUserExists_ShouldReturnUser() {
@@ -62,7 +64,8 @@ class UserServiceTest {
     @Test
     void createUser_WithValidData_ShouldCreateUser() {
         UserCreateDto userDto = new UserCreateDto("New User", "da@gmail.com", "1111");
-        User savedUser = new User(2L, userDto.getName(), userDto.getPassword(), userDto.getEmail(), null, null);
+        User savedUser = new User(2L, userDto.getName(), userDto.getPassword(),
+                userDto.getEmail(), null, null);
 
         when(userRepository.save(any(User.class))).thenReturn(savedUser);
 
@@ -117,7 +120,8 @@ class UserServiceTest {
 
     @Test
     void getAllUsers_ReturnsList() {
-        User anotherUserTest = new User(2L, "Another Test User", "Password", "email@gmail.com", List.of(reviewTest), Set.of(bookTest));
+        User anotherUserTest = new User(2L, "Another Test User", "Password",
+                "email@gmail.com", List.of(reviewTest), Set.of(bookTest));
 
         when(userRepository.findAll()).thenReturn(List.of(userTest, anotherUserTest));
 

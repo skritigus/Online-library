@@ -35,6 +35,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(TooQuicklyException.class)
+    @ResponseStatus(HttpStatus.TOO_EARLY)
+    public ResponseEntity<String> handleTooQuicklyException(TooQuicklyException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.TOO_EARLY);
+    }
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<String> handleException(Exception ex) {

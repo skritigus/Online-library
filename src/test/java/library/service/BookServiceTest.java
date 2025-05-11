@@ -45,13 +45,18 @@ class BookServiceTest {
     @InjectMocks
     private BookService bookService;
 
-    private final Author authorTest = new Author(1L, "Test Author", "Info", null);
-    private final Category categoryTest = new Category(1L, "Test Category", null);
-    private final Book bookTest = new Book(1L, "Test Book", Set.of(authorTest), Set.of(categoryTest), 100, null, 1000, null, null);
+    private final Author authorTest = new Author(1L, "Test Author",
+            "Info", null);
+    private final Category categoryTest = new Category(1L,
+            "Test Category", null);
+    private final Book bookTest = new Book(1L, "Test Book",
+            Set.of(authorTest), Set.of(categoryTest), 100, null, 1000, null, null);
 
     @Test
     void getAllBooks_ReturnsAllBooks() {
-        Book anotherBookTest = new Book(2L, "Another Test Book", Set.of(authorTest), Set.of(categoryTest), 100, null, 1000, null, null);
+        Book anotherBookTest = new Book(2L, "Another Test Book",
+                Set.of(authorTest), Set.of(categoryTest), 100,
+                null, 1000, null, null);
 
         when(bookRepository.findAll()).thenReturn(List.of(bookTest, anotherBookTest));
 
@@ -102,7 +107,8 @@ class BookServiceTest {
 
         when(bookRepository.findById(20L)).thenReturn(Optional.empty());
 
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> bookService.getBookById(20L));
+        NotFoundException exception = assertThrows(NotFoundException.class,
+                () -> bookService.getBookById(20L));
 
         assertEquals("Book is not found with id: " + 20L, exception.getMessage());
         verify(bookRepository).findById(20L);
@@ -147,7 +153,8 @@ class BookServiceTest {
 
         when(bookRepository.findByName("Nonexistent Book")).thenReturn(Collections.emptyList());
 
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> bookService.getBookByName("Nonexistent Book"));
+        NotFoundException exception = assertThrows(NotFoundException.class,
+                () -> bookService.getBookByName("Nonexistent Book"));
 
         assertEquals("Book not found with name:" + "Nonexistent Book", exception.getMessage());
         verify(bookRepository).findByName("Nonexistent Book");
@@ -192,7 +199,8 @@ class BookServiceTest {
 
         when(bookRepository.findByAuthor("Nonexistent Author")).thenReturn(Collections.emptyList());
 
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> bookService.getBookByAuthor("Nonexistent Author"));
+        NotFoundException exception = assertThrows(NotFoundException.class,
+                () -> bookService.getBookByAuthor("Nonexistent Author"));
 
         assertEquals("Book not found with author's name: " + "Nonexistent Author", exception.getMessage());
         verify(bookRepository).findByAuthor("Nonexistent Author");
@@ -237,16 +245,20 @@ class BookServiceTest {
 
         when(bookRepository.findByCategory("Nonexistent Category")).thenReturn(Collections.emptyList());
 
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> bookService.getBookByCategory("Nonexistent Category"));
-        assertEquals("Book not found with category's name: " + "Nonexistent Category", exception.getMessage());
+        NotFoundException exception = assertThrows(NotFoundException.class,
+                () -> bookService.getBookByCategory("Nonexistent Category"));
+        assertEquals("Book not found with category's name: "
+                + "Nonexistent Category", exception.getMessage());
         verify(bookRepository).findByCategory("Nonexistent Category");
         verify(cache, never()).get(key);
     }
 
     @Test
     void createBook_WithValidData_CreatesBook() {
-        BookCreateDto bookDto = new BookCreateDto("New Book", Set.of(1L), Set.of(1L), 20, 2021);
-        Book savedBook = new Book(2L, "New Book", Set.of(authorTest), Set.of(categoryTest), 20, null, 2021, null, null);
+        BookCreateDto bookDto = new BookCreateDto("New Book", Set.of(1L),
+                Set.of(1L), 20, 2021);
+        Book savedBook = new Book(2L, "New Book", Set.of(authorTest),
+                Set.of(categoryTest), 20, null, 2021, null, null);
 
         when(authorRepository.findById(1L)).thenReturn(Optional.of(authorTest));
         when(categoryRepository.findById(1L)).thenReturn(Optional.of(categoryTest));
@@ -268,8 +280,11 @@ class BookServiceTest {
 
     @Test
     void createBook_WithEmptySets_CreatesBook() {
-        BookCreateDto bookDto = new BookCreateDto("New Book", Collections.emptySet(), Collections.emptySet(), 20, 2021);
-        Book savedBook = new Book(2L, "New Book", Collections.emptySet(), Collections.emptySet(), 20, null, 2021, null, null);
+        BookCreateDto bookDto = new BookCreateDto("New Book",
+                Collections.emptySet(), Collections.emptySet(), 20, 2021);
+        Book savedBook = new Book(2L, "New Book",
+                Collections.emptySet(), Collections.emptySet(), 20,
+                null, 2021, null, null);
 
         when(bookRepository.save(any(Book.class))).thenReturn(savedBook);
 
@@ -289,8 +304,10 @@ class BookServiceTest {
 
     @Test
     void createBook_WithoutSets_CreatesBook() {
-        BookCreateDto bookDto = new BookCreateDto("New Book", null, null, 20, 2021);
-        Book savedBook = new Book(2L, "New Book", Collections.emptySet(), Collections.emptySet(), 20, null, 2021, null, null);
+        BookCreateDto bookDto = new BookCreateDto("New Book",
+                null, null, 20, 2021);
+        Book savedBook = new Book(2L, "New Book", Collections.emptySet(),
+                Collections.emptySet(), 20, null, 2021, null, null);
 
         when(bookRepository.save(any(Book.class))).thenReturn(savedBook);
 
@@ -310,11 +327,13 @@ class BookServiceTest {
 
     @Test
     void createBook_WhenAuthorNotFound_ThrowsException() {
-        BookCreateDto bookDto = new BookCreateDto("New Book", Set.of(20L), Set.of(1L), 20, 2021);
+        BookCreateDto bookDto = new BookCreateDto("New Book", Set.of(20L),
+                Set.of(1L), 20, 2021);
 
         when(authorRepository.findById(20L)).thenReturn(Optional.empty());
 
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> bookService.createBook(bookDto));
+        NotFoundException exception = assertThrows(NotFoundException.class,
+                () -> bookService.createBook(bookDto));
         assertEquals("Author is not found with id: " + 20L, exception.getMessage());
         verify(authorRepository).findById(20L);
         verify(cache, never()).clear();
@@ -322,12 +341,14 @@ class BookServiceTest {
 
     @Test
     void createBook_WhenCategoryNotFound_ThrowsException() {
-        BookCreateDto bookDto = new BookCreateDto("New Book", Set.of(1L), Set.of(20L), 20, 2021);
+        BookCreateDto bookDto = new BookCreateDto("New Book", Set.of(1L),
+                Set.of(20L), 20, 2021);
 
         when(authorRepository.findById(1L)).thenReturn(Optional.of(authorTest));
         when(categoryRepository.findById(20L)).thenReturn(Optional.empty());
 
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> bookService.createBook(bookDto));
+        NotFoundException exception = assertThrows(NotFoundException.class,
+                () -> bookService.createBook(bookDto));
         assertEquals("Category is not found with id: " + 20L, exception.getMessage());
         verify(authorRepository).findById(1L);
         verify(categoryRepository).findById(20L);
@@ -336,7 +357,8 @@ class BookServiceTest {
 
     @Test
     void updateBook_WithValidData_UpdatesBook() {
-        BookCreateDto bookDto = new BookCreateDto("Updated Book", Set.of(1L), Set.of(1L), 20, 2021);
+        BookCreateDto bookDto = new BookCreateDto("Updated Book", Set.of(1L),
+                Set.of(1L), 20, 2021);
 
         when(bookRepository.findById(1L)).thenReturn(Optional.of(bookTest));
         when(authorRepository.findById(1L)).thenReturn(Optional.of(authorTest));
@@ -357,23 +379,27 @@ class BookServiceTest {
 
     @Test
     void updateBook_WhenBookNotFound_ThrowsException() {
-        BookCreateDto bookDto = new BookCreateDto("Updated Book", Set.of(1L), Set.of(1L), 20, 2021);
+        BookCreateDto bookDto = new BookCreateDto("Updated Book",
+                Set.of(1L), Set.of(1L), 20, 2021);
 
         when(bookRepository.findById(20L)).thenReturn(Optional.empty());
 
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> bookService.updateBook(20L, bookDto));
+        NotFoundException exception = assertThrows(NotFoundException.class,
+                () -> bookService.updateBook(20L, bookDto));
         assertEquals("Book is not found with id: " + 20L, exception.getMessage());
         verify(bookRepository).findById(20L);
     }
 
     @Test
     void updateBook_WhenAuthorNotFound_ThrowsException() {
-        BookCreateDto bookDto = new BookCreateDto("Updated Book", Set.of(20L), Set.of(1L), 20, 2021);
+        BookCreateDto bookDto = new BookCreateDto("Updated Book", Set.of(20L),
+                Set.of(1L), 20, 2021);
 
         when(bookRepository.findById(1L)).thenReturn(Optional.of(bookTest));
         when(authorRepository.findById(20L)).thenReturn(Optional.empty());
 
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> bookService.updateBook(1L, bookDto));
+        NotFoundException exception = assertThrows(NotFoundException.class,
+                () -> bookService.updateBook(1L, bookDto));
         assertEquals("Author is not found with id: " + 20L, exception.getMessage());
         verify(bookRepository).findById(1L);
         verify(authorRepository).findById(20L);
@@ -381,13 +407,15 @@ class BookServiceTest {
 
     @Test
     void updateBook_WhenCategoryNotFound_ThrowsException() {
-        BookCreateDto bookDto = new BookCreateDto("Updated Book", Set.of(1L), Set.of(20L), 20, 2021);
+        BookCreateDto bookDto = new BookCreateDto("Updated Book", Set.of(1L),
+                Set.of(20L), 20, 2021);
 
         when(bookRepository.findById(1L)).thenReturn(Optional.of(bookTest));
         when(authorRepository.findById(1L)).thenReturn(Optional.of(authorTest));
         when(categoryRepository.findById(20L)).thenReturn(Optional.empty());
 
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> bookService.updateBook(1L, bookDto));
+        NotFoundException exception = assertThrows(NotFoundException.class,
+                () -> bookService.updateBook(1L, bookDto));
         assertEquals("Category is not found with id: " + 20L, exception.getMessage());
         verify(bookRepository).findById(1L);
         verify(authorRepository).findById(1L);
@@ -409,7 +437,8 @@ class BookServiceTest {
     void deleteBook_WhenNotFound_ThrowsException() {
         when(bookRepository.existsById(20L)).thenReturn(false);
 
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> bookService.deleteBook(20L));
+        NotFoundException exception = assertThrows(NotFoundException.class,
+                () -> bookService.deleteBook(20L));
         assertEquals("Book is not found with id: " + 20L, exception.getMessage());
         verify(bookRepository).existsById(20L);
         verify(bookRepository, never()).deleteById(20L);

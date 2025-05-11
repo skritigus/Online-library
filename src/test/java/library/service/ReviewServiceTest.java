@@ -38,9 +38,12 @@ class ReviewServiceTest {
     @InjectMocks
     private ReviewService reviewService;
 
-    private final User userTest = new User(1L, "Test User", "Password", "email@gmail.com", new ArrayList<>(), null);
-    private final Book bookTest = new Book(1L, "Test Book", null, null, 100, new ArrayList<>(), 1000, null, null);
-    private final Review reviewTest = new Review(1L, bookTest, userTest, 2, "Comment");
+    private final User userTest = new User(1L, "Test User",
+            "Password", "email@gmail.com", new ArrayList<>(), null);
+    private final Book bookTest = new Book(1L, "Test Book",
+            null, null, 100, new ArrayList<>(), 1000, null, null);
+    private final Review reviewTest = new Review(1L, bookTest,
+            userTest, 2, "Comment");
 
     @Test
     void getReviewById_WhenExists_ReturnsReview() {
@@ -61,7 +64,8 @@ class ReviewServiceTest {
     void getReviewById_WhenBookNotFound_ThrowsException() {
         when(bookRepository.existsById(20L)).thenReturn(false);
 
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> reviewService.getReviewById(1L, 20L));
+        NotFoundException exception = assertThrows(NotFoundException.class,
+                () -> reviewService.getReviewById(1L, 20L));
         assertEquals("Book is not found with id: " + 20L, exception.getMessage());
         verify(bookRepository).existsById(20L);
         verify(reviewRepository, never()).findByIdAndBookId(anyLong(), anyLong());
@@ -72,7 +76,8 @@ class ReviewServiceTest {
         when(bookRepository.existsById(1L)).thenReturn(true);
         when(reviewRepository.findByIdAndBookId(20L, 1L)).thenReturn(Optional.empty());
 
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> reviewService.getReviewById(20L, 1L));
+        NotFoundException exception = assertThrows(NotFoundException.class,
+                () -> reviewService.getReviewById(20L, 1L));
         assertEquals("Review is not found with id: " + 20L, exception.getMessage());
         verify(bookRepository).existsById(1L);
         verify(reviewRepository).findByIdAndBookId(20L, 1L);
@@ -103,7 +108,8 @@ class ReviewServiceTest {
 
         when(bookRepository.findById(20L)).thenReturn(Optional.empty());
 
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> reviewService.createReview(20L, reviewDto));
+        NotFoundException exception = assertThrows(NotFoundException.class,
+                () -> reviewService.createReview(20L, reviewDto));
         assertEquals("Book is not found with id: " + 20L, exception.getMessage());
         verify(bookRepository).findById(20L);
         verify(userRepository, never()).findById(anyLong());
@@ -117,7 +123,8 @@ class ReviewServiceTest {
         when(bookRepository.findById(1L)).thenReturn(Optional.of(bookTest));
         when(userRepository.findById(20L)).thenReturn(Optional.empty());
 
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> reviewService.createReview(1L, reviewDto));
+        NotFoundException exception = assertThrows(NotFoundException.class,
+                () -> reviewService.createReview(1L, reviewDto));
         assertEquals("User is not found with id: " + 20L, exception.getMessage());
         verify(bookRepository).findById(1L);
         verify(userRepository).findById(20L);
@@ -150,7 +157,8 @@ class ReviewServiceTest {
 
         when(bookRepository.existsById(20L)).thenReturn(false);
 
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> reviewService.updateReview(1L, 20L, reviewDto));
+        NotFoundException exception = assertThrows(NotFoundException.class,
+                () -> reviewService.updateReview(1L, 20L, reviewDto));
         assertEquals("Book is not found with id: " + 20L, exception.getMessage());
         verify(bookRepository).existsById(20L);
         verify(reviewRepository, never()).findById(anyLong());
@@ -165,7 +173,8 @@ class ReviewServiceTest {
         when(reviewRepository.findById(1L)).thenReturn(Optional.of(reviewTest));
         when(userRepository.findById(20L)).thenReturn(Optional.empty());
 
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> reviewService.updateReview(1L, 1L, reviewDto));
+        NotFoundException exception = assertThrows(NotFoundException.class,
+                () -> reviewService.updateReview(1L, 1L, reviewDto));
         assertEquals("User is not found with id: " + 20L, exception.getMessage());
         verify(bookRepository).existsById(1L);
         verify(reviewRepository).findById(1L);
@@ -179,7 +188,8 @@ class ReviewServiceTest {
         when(bookRepository.existsById(1L)).thenReturn(true);
         when(reviewRepository.findById(20L)).thenReturn(Optional.empty());
 
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> reviewService.updateReview(20L, 1L, reviewDto));
+        NotFoundException exception = assertThrows(NotFoundException.class,
+                () -> reviewService.updateReview(20L, 1L, reviewDto));
         assertEquals("Review is not found with id: " + 20L, exception.getMessage());
         verify(bookRepository).existsById(1L);
         verify(reviewRepository).findById(20L);
@@ -202,7 +212,8 @@ class ReviewServiceTest {
     void deleteReview_WhenBookNotFound_ThrowsException() {
         when(bookRepository.existsById(20L)).thenReturn(false);
 
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> reviewService.deleteReview(1L, 20L));
+        NotFoundException exception = assertThrows(NotFoundException.class,
+                () -> reviewService.deleteReview(1L, 20L));
         assertEquals("Book is not found with id: " + 20L, exception.getMessage());
         verify(bookRepository).existsById(20L);
         verify(reviewRepository, never()).existsById(anyLong());
@@ -213,7 +224,8 @@ class ReviewServiceTest {
         when(bookRepository.existsById(1L)).thenReturn(true);
         when(reviewRepository.existsById(20L)).thenReturn(false);
 
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> reviewService.deleteReview(20L, 1L));
+        NotFoundException exception = assertThrows(NotFoundException.class,
+                () -> reviewService.deleteReview(20L, 1L));
         assertEquals("Review is not found with id: " + 20L, exception.getMessage());
         verify(bookRepository).existsById(1L);
         verify(reviewRepository).existsById(20L);

@@ -42,12 +42,15 @@ class AuthorServiceTest {
     @InjectMocks
     private AuthorService authorService;
 
-    private final Book bookTest = new Book(1L, "Test Book", null, null, 0, null, 0, null, null);
-    private final Author authorTest = new Author(1L, "Test Author", "Info", Set.of(bookTest));
+    private final Book bookTest = new Book(1L, "Test Book",
+            null, null, 0, null, 0, null, null);
+    private final Author authorTest = new Author(1L, "Test Author",
+            "Info", Set.of(bookTest));
 
     @Test
     void getAllAuthors_ReturnsAllAuthors() {
-        Author anotherAuthorTest = new Author(2L, "Another Test Author", "Info", Set.of(bookTest));
+        Author anotherAuthorTest = new Author(2L, "Another Test Author",
+                "Info", Set.of(bookTest));
 
         when(authorRepository.findAll()).thenReturn(List.of(authorTest, anotherAuthorTest));
 
@@ -84,10 +87,13 @@ class AuthorServiceTest {
 
     @Test
     void createAuthor_WithValidData_CreatesAuthor() {
-        Book book1 = new Book(1L, "Test Book 1", new HashSet<>(), null, 0, null, 0, null, null);
-        Book book2 = new Book(2L, "Test Book 2", new HashSet<>(), null, 0, null, 0, null, null);
+        Book book1 = new Book(1L, "Test Book 1", new HashSet<>(),
+                null, 0, null, 0, null, null);
+        Book book2 = new Book(2L, "Test Book 2", new HashSet<>(),
+                null, 0, null, 0, null, null);
 
-        AuthorCreateDto authorDto = new AuthorCreateDto("New Test Author", "Info", List.of(book1.getId(), book2.getId()));
+        AuthorCreateDto authorDto = new AuthorCreateDto("New Test Author",
+                "Info", List.of(book1.getId(), book2.getId()));
         Author savedAuthor = new Author(2L, authorDto.getName(), authorDto.getInfo(), Set.of(book1, book2));
 
         when(bookRepository.findById(1L)).thenReturn(Optional.of(book1));
@@ -106,8 +112,10 @@ class AuthorServiceTest {
 
     @Test
     void createAuthor_WithEmptyBookList_CreatesAuthor() {
-        AuthorCreateDto authorDto = new AuthorCreateDto("New Test Author", "Info", new ArrayList<>());
-        Author savedAuthor = new Author(2L, authorDto.getName(), authorDto.getInfo(), Collections.emptySet());
+        AuthorCreateDto authorDto = new AuthorCreateDto("New Test Author",
+                "Info", new ArrayList<>());
+        Author savedAuthor = new Author(2L, authorDto.getName(),
+                authorDto.getInfo(), Collections.emptySet());
 
         when(authorRepository.save(any(Author.class))).thenReturn(savedAuthor);
 
@@ -123,8 +131,10 @@ class AuthorServiceTest {
 
     @Test
     void createAuthor_WithoutBookList_CreatesAuthor() {
-        AuthorCreateDto authorDto = new AuthorCreateDto("New Test Author", "Info", null);
-        Author savedAuthor = new Author(2L, authorDto.getName(), authorDto.getInfo(), Collections.emptySet());
+        AuthorCreateDto authorDto = new AuthorCreateDto("New Test Author",
+                "Info", null);
+        Author savedAuthor = new Author(2L, authorDto.getName(),
+                authorDto.getInfo(), Collections.emptySet());
 
         when(authorRepository.save(any(Author.class))).thenReturn(savedAuthor);
 
@@ -140,11 +150,13 @@ class AuthorServiceTest {
 
     @Test
     void createAuthor_BookNotFound_ThrowsException() {
-        AuthorCreateDto authorDto = new AuthorCreateDto("New Test Author", "Info", List.of(1L));
+        AuthorCreateDto authorDto = new AuthorCreateDto("New Test Author",
+                "Info", List.of(1L));
 
         when(bookRepository.findById(1L)).thenReturn(Optional.empty());
 
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> authorService.createAuthor(authorDto));
+        NotFoundException exception = assertThrows(NotFoundException.class,
+                () -> authorService.createAuthor(authorDto));
         assertEquals("Book is not found with id: " + 1L, exception.getMessage());
         verify(bookRepository).findById(1L);
         verify(cache, never()).clear();
@@ -152,9 +164,11 @@ class AuthorServiceTest {
 
     @Test
     void updateAuthor_WithValidAuthor_UpdatesAuthor() {
-        Book book = new Book(2L, "Different Test Book", new HashSet<>(), null, 0, null, 0, null, null);
+        Book book = new Book(2L, "Different Test Book", new HashSet<>(),
+                null, 0, null, 0, null, null);
 
-        AuthorCreateDto authorDto = new AuthorCreateDto("Updated Author", "Info", List.of(2L));
+        AuthorCreateDto authorDto = new AuthorCreateDto("Updated Author",
+                "Info", List.of(2L));
 
 
         when(authorRepository.findById(1L)).thenReturn(Optional.of(authorTest));
@@ -173,23 +187,27 @@ class AuthorServiceTest {
 
     @Test
     void updateAuthor_WhenAuthorNotFound_ThrowsException() {
-        AuthorCreateDto authorDto = new AuthorCreateDto("Updated Author", "Info", List.of(1L));
+        AuthorCreateDto authorDto = new AuthorCreateDto("Updated Author",
+                "Info", List.of(1L));
 
         when(authorRepository.findById(5L)).thenReturn(Optional.empty());
 
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> authorService.updateAuthor(5L, authorDto));
+        NotFoundException exception = assertThrows(NotFoundException.class,
+                () -> authorService.updateAuthor(5L, authorDto));
         assertEquals("Author is not found with id: " + 5L, exception.getMessage());
         verify(authorRepository).findById(5L);
     }
 
     @Test
     void updateAuthor_WhenBookNotFound_ThrowsException() {
-        AuthorCreateDto authorDto = new AuthorCreateDto("Updated Author", "Info", List.of(20L));
+        AuthorCreateDto authorDto = new AuthorCreateDto("Updated Author",
+                "Info", List.of(20L));
 
         when(authorRepository.findById(1L)).thenReturn(Optional.of(authorTest));
         when(bookRepository.findById(20L)).thenReturn(Optional.empty());
 
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> authorService.updateAuthor(1L, authorDto));
+        NotFoundException exception = assertThrows(NotFoundException.class,
+                () -> authorService.updateAuthor(1L, authorDto));
 
         assertEquals("Book is not found with id: " + 20L, exception.getMessage());
         verify(authorRepository).findById(1L);
@@ -211,7 +229,8 @@ class AuthorServiceTest {
     void deleteAuthor_WhenNotFound_ThrowsException() {
         when(authorRepository.existsById(5L)).thenReturn(false);
 
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> authorService.deleteAuthor(5L));
+        NotFoundException exception = assertThrows(NotFoundException.class,
+                () -> authorService.deleteAuthor(5L));
         assertEquals("Author is not found with id: " + 5L, exception.getMessage());
         verify(authorRepository).existsById(5L);
         verify(authorRepository, never()).deleteById(5L);
