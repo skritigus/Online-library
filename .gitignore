@@ -1,6 +1,5 @@
 frontend/node_modules/
 .idea/
-*.properties
 .mvn/
 target/
 /HELP.md
