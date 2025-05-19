@@ -1,6 +1,5 @@
 package library.mapper;
 
-import java.util.HashSet;
 import library.dto.create.CategoryCreateDto;
 import library.dto.get.CategoryGetDto;
 import library.model.Category;
@@ -14,6 +13,10 @@ public class CategoryMapper {
         dto.setId(entity.getId());
         dto.setName(entity.getName());
 
+        if (entity.getBooks() != null) {
+            dto.setCount(entity.getBooks().size());
+        }
+
         return dto;
     }
 
@@ -21,7 +24,6 @@ public class CategoryMapper {
         Category entity = new Category();
 
         entity.setName(dto.getName());
-        entity.setBooks(new HashSet<>());
 
         return entity;
     }

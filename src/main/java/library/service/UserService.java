@@ -1,8 +1,12 @@
 package library.service;
 
 import java.util.List;
+
+import library.dto.AuthorizationRequest;
+import library.dto.AuthorizationResponse;
 import library.dto.create.UserCreateDto;
 import library.dto.get.UserGetDto;
+import library.exception.AuthenticationException;
 import library.exception.NotFoundException;
 import library.mapper.UserMapper;
 import library.model.User;
@@ -13,7 +17,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
     private final UserRepository userRepository;
-    private static final String USER_NOT_FOUND_MESSAGE = "User is not found with id: ";
+    private static final String USER_WITH_ID_NOT_FOUND_MESSAGE = "User is not found with id: ";
+    private static final String USER_WITH_NAME_NOT_FOUND_MESSAGE = "User is not found with name: ";
+    private static final String USER_WITH_EMAIL_NOT_FOUND_MESSAGE
+            = "User is not found with email: ";
 
     @Autowired
     public UserService(UserRepository userRepository) {
@@ -27,18 +34,26 @@ public class UserService {
 
     public UserGetDto getUserById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND_MESSAGE + id));
+                .orElseThrow(() -> new NotFoundException(USER_WITH_ID_NOT_FOUND_MESSAGE + id));
         return UserMapper.toDto(user);
     }
 
-    public UserGetDto createUser(UserCreateDto userDto) {
+    public AuthorizationResponse createUser(UserCreateDto userDto) {
         User userEntity = UserMapper.fromDto(userDto);
-        return UserMapper.toDto(userRepository.save(userEntity));
+        userEntity = userRepository.save(userEntity);
+
+        AuthorizationResponse response = new AuthorizationResponse();
+        response.setUserId(userEntity.getId());
+        response.setUsername(userEntity.getName());
+        response.setEmail(userEntity.getEmail());
+        response.setToken("dummy-token");
+
+        return response;
     }
 
     public UserGetDto updateUser(Long id, UserCreateDto userDto) {
         User userEntity = userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND_MESSAGE + id));
+                .orElseThrow(() -> new NotFoundException(USER_WITH_ID_NOT_FOUND_MESSAGE + id));
         userEntity.setEmail(userDto.getEmail());
         userEntity.setPassword(userDto.getPassword());
         userEntity.setName(userDto.getName());
@@ -47,8 +62,27 @@ public class UserService {
 
     public void deleteUser(Long id) {
         if (!userRepository.existsById(id)) {
-            throw new NotFoundException(USER_NOT_FOUND_MESSAGE + id);
+            throw new NotFoundException(USER_WITH_ID_NOT_FOUND_MESSAGE + id);
         }
         userRepository.deleteById(id);
+    }
+
+    public AuthorizationResponse authenticate(AuthorizationRequest request) {
+        User user = userRepository.findByEmail(request.getEmail());
+        if (user == null) {
+            throw new NotFoundException(USER_WITH_EMAIL_NOT_FOUND_MESSAGE + request.getEmail());
+        }
+
+        if (!user.getPassword().equals(request.getPassword())) {
+            throw new AuthenticationException("Неверный пароль");
+        }
+
+        AuthorizationResponse response = new AuthorizationResponse();
+        response.setUserId(user.getId());
+        response.setUsername(user.getName());
+        response.setEmail(user.getEmail());
+        response.setToken("dummy-token");
+
+        return response;
     }
 }

@@ -9,8 +9,8 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
+import library.exception.LogFileNotFoundException;
 import library.exception.NotFoundException;
-import library.exception.ProcessingFileException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +38,7 @@ public class LogService {
             try {
                 Path sourcePath = Paths.get(LOG_FILE_PATH);
                 if (!Files.exists(sourcePath)) {
-                    throw new ProcessingFileException("Logs file does not exist");
+                    throw new LogFileNotFoundException("Logs file does not exist");
                 }
 
                 List<String> filteredLines;

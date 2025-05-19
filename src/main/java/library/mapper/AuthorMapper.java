@@ -4,6 +4,7 @@ import java.util.HashSet;
 import library.dto.create.AuthorCreateDto;
 import library.dto.get.AuthorGetDto;
 import library.model.Author;
+import library.model.Book;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
@@ -14,6 +15,12 @@ public class AuthorMapper {
         dto.setId(entity.getId());
         dto.setName(entity.getName());
         dto.setInfo(entity.getInfo());
+
+        if (entity.getBooks() != null) {
+            dto.setBooks(entity.getBooks().stream()
+                    .map(Book::getName)
+                    .toList());
+        }
 
         return dto;
     }

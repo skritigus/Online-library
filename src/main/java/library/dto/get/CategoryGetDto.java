@@ -8,4 +8,5 @@ import lombok.Setter;
 public class CategoryGetDto {
     private Long id;
     private String name;
+    private Integer count;
 }
