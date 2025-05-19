@@ -7,10 +7,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
-<<<<<<< HEAD
-=======
-
->>>>>>> 848242c30eda796be130d922754bcd8c76fe0498
 import library.dto.AuthorizationRequest;
 import library.dto.AuthorizationResponse;
 import library.dto.create.UserCreateDto;
