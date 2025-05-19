@@ -14,9 +14,9 @@ import lombok.Setter;
 @NoArgsConstructor
 public class AuthorCreateDto {
     @NotBlank(message = "Author's name can't be blank")
-    @Size(min = 2, max = 100, message = "Author's name must be between 2 and 100 characters")
+    @Size(min = 2, max = 255, message = "Author's name must be between 2 and 100 characters")
     private String name;
-    @Size(max = 255, message = "Information about author must below 256 characters")
+    @Size(max = 255, message = "Information about author must below 255 characters")
     private String info;
     private List<Long> bookIds;
 }

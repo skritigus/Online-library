@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
+import library.dto.AuthorizationRequest;
+import library.dto.AuthorizationResponse;
 import library.dto.create.UserCreateDto;
 import library.dto.get.UserGetDto;
 import library.service.UserService;
@@ -61,7 +63,7 @@ public class UserController {
         @ApiResponse(responseCode = "404", description = "User not found")
     })
     @PostMapping
-    public ResponseEntity<UserGetDto> createUser(
+    public ResponseEntity<AuthorizationResponse> createUser(
             @Parameter(description = "Data to create user")
             @Valid @RequestBody UserCreateDto user) {
         return new ResponseEntity<>(userService.createUser(user), HttpStatus.CREATED);
@@ -93,5 +95,16 @@ public class UserController {
             @Parameter(description = "User's ID", example = "2") @PathVariable Long id) {
         userService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/login")
+    @Operation(summary = "User authorization")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "User authorized successfully"),
+        @ApiResponse(responseCode = "404", description = "User not found")
+    })
+    public ResponseEntity<AuthorizationResponse> login(
+            @RequestBody AuthorizationRequest authRequest) {
+        return ResponseEntity.ok(userService.authenticate(authRequest));
     }
 }

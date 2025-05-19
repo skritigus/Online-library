@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.List;
 import library.dto.create.ReviewCreateDto;
 import library.dto.get.ReviewGetDto;
 import library.service.ReviewService;
@@ -32,10 +33,21 @@ public class ReviewController {
         this.reviewService = reviewService;
     }
 
+    @Operation(summary = "Get all reviews", description = "Retrieves all reviews of specified book")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Reviews retrieved successfully"),
+        @ApiResponse(responseCode = "404", description = "Book not found")
+    })
+    @GetMapping
+    public ResponseEntity<List<ReviewGetDto>> getAllReviews(
+            @Parameter(description = "Book's ID", example = "2") @PathVariable Long bookId) {
+        return ResponseEntity.ok(reviewService.getAllReviews(bookId));
+    }
+
     @Operation(summary = "Get book's review by ID",
             description = "Retrieves existing review of book")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Review updated successfully"),
+        @ApiResponse(responseCode = "200", description = "Review retrieved successfully"),
         @ApiResponse(responseCode = "404", description = "Book or review not found")
     })
     @GetMapping("/{id}")

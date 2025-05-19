@@ -1,9 +1,10 @@
 package library.service;
 
 import jakarta.transaction.Transactional;
-import java.util.ArrayList;
+import java.util.List;
 import library.dto.create.ReviewCreateDto;
 import library.dto.get.ReviewGetDto;
+import library.exception.AuthenticationException;
 import library.exception.NotFoundException;
 import library.mapper.ReviewMapper;
 import library.model.Book;
@@ -33,6 +34,16 @@ public class ReviewService {
         this.userRepository = userRepository;
     }
 
+    public List<ReviewGetDto> getAllReviews(Long bookId) {
+        if (!bookRepository.existsById(bookId)) {
+            throw new NotFoundException(BOOK_NOT_FOUND_MESSAGE + bookId);
+        }
+
+        return reviewRepository.findByBookId(bookId).stream()
+                .map(ReviewMapper::toDto)
+                .toList();
+    }
+
     public ReviewGetDto getReviewById(Long id, Long bookId) {
         if (!bookRepository.existsById(bookId)) {
             throw new NotFoundException(BOOK_NOT_FOUND_MESSAGE + bookId);
@@ -46,31 +57,48 @@ public class ReviewService {
     public ReviewGetDto createReview(Long bookId, ReviewCreateDto reviewDto) {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new NotFoundException(BOOK_NOT_FOUND_MESSAGE + bookId));
-        Review review = ReviewMapper.fromDto(reviewDto);
 
-        book.getReviews().add(review);
-        review.setBook(book);
+        if (reviewDto.getUserId() == null) {
+            throw new AuthenticationException("User is not logged in");
+        }
 
         User user = userRepository.findById(reviewDto.getUserId())
                 .orElseThrow(()
                         -> new NotFoundException(USER_NOT_FOUND_MESSAGE + reviewDto.getUserId()));
 
+        Review review = ReviewMapper.fromDto(reviewDto);
+
+        book.getReviews().add(review);
+        review.setBook(book);
+
         user.getReviews().add(review);
         review.setUser(user);
+
+        book.setRating(book.getReviews().stream()
+                .mapToInt(Review::getRating)
+                .average().orElse(0.0));
 
         return ReviewMapper.toDto(reviewRepository.save(review));
     }
 
     @Transactional 
     public ReviewGetDto updateReview(Long id, Long bookId, ReviewCreateDto reviewDto) {
-        if (!bookRepository.existsById(bookId)) {
-            throw new NotFoundException(BOOK_NOT_FOUND_MESSAGE + bookId);
-        }
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new NotFoundException(BOOK_NOT_FOUND_MESSAGE + bookId));
 
         Review review = reviewRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(REVIEW_NOT_FOUND_MESSAGE + id));
+
         review.setComment(reviewDto.getComment());
         review.setRating(reviewDto.getRating());
+
+        book.setRating(book.getReviews().stream()
+                .mapToInt(Review::getRating)
+                .average().orElse(0.0));
+
+        if (reviewDto.getUserId() == null) {
+            throw new AuthenticationException("User is not logged in");
+        }
 
         User user = userRepository.findById(reviewDto.getUserId())
                 .orElseThrow(()
@@ -83,12 +111,17 @@ public class ReviewService {
     }
 
     public void deleteReview(Long id, Long bookId) {
-        if (!bookRepository.existsById(bookId)) {
-            throw new NotFoundException(BOOK_NOT_FOUND_MESSAGE + bookId);
-        }
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new NotFoundException(BOOK_NOT_FOUND_MESSAGE + bookId));
+
         if (!reviewRepository.existsById(id)) {
             throw new NotFoundException(REVIEW_NOT_FOUND_MESSAGE + id);
         }
+
+        book.setRating(book.getReviews().stream()
+                .mapToInt(Review::getRating)
+                .average().orElse(0.0));
+
         reviewRepository.deleteById(id);
     }
 }
