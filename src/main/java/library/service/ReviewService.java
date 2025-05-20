@@ -78,9 +78,13 @@ public class ReviewService {
         user.getReviews().add(review);
         review.setUser(user);
 
-        book.setRating(book.getReviews().stream()
-                .mapToInt(Review::getRating)
-                .average().orElse(0.0));
+        if (book.getReviews() != null) {
+            book.setRating(book.getReviews().stream()
+                    .mapToInt(Review::getRating)
+                    .average().orElse(0.0));
+        } else {
+            book.setRating(0.0);
+        }
 
         cache.clear();
         return ReviewMapper.toDto(reviewRepository.save(review));
@@ -97,10 +101,6 @@ public class ReviewService {
         review.setComment(reviewDto.getComment());
         review.setRating(reviewDto.getRating());
 
-        book.setRating(book.getReviews().stream()
-                .mapToInt(Review::getRating)
-                .average().orElse(0.0));
-
         if (reviewDto.getUserId() == null) {
             throw new AuthenticationException("User is not logged in");
         }
@@ -111,6 +111,14 @@ public class ReviewService {
 
         user.getReviews().add(review);
         review.setUser(user);
+
+        if (book.getReviews() != null) {
+            book.setRating(book.getReviews().stream()
+                    .mapToInt(Review::getRating)
+                    .average().orElse(0.0));
+        } else {
+            book.setRating(0.0);
+        }
 
         cache.clear();
         return ReviewMapper.toDto(reviewRepository.save(review));
@@ -126,9 +134,13 @@ public class ReviewService {
 
         reviewRepository.deleteById(id);
 
-        book.setRating(book.getReviews().stream()
-                .mapToInt(Review::getRating)
-                .average().orElse(0.0));
+        if (book.getReviews() != null) {
+            book.setRating(book.getReviews().stream()
+                    .mapToInt(Review::getRating)
+                    .average().orElse(0.0));
+        } else {
+            book.setRating(0.0);
+        }
 
         cache.clear();
     }

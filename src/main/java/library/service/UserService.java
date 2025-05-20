@@ -10,6 +10,7 @@ import library.dto.get.UserGetDto;
 import library.exception.AuthenticationException;
 import library.exception.ConflictException;
 import library.exception.NotFoundException;
+import library.exception.PasswordRequiredException;
 import library.mapper.UserMapper;
 import library.model.User;
 import library.repository.UserRepository;
@@ -25,6 +26,7 @@ public class UserService {
     private static final String USER_WITH_EMAIL_EXISTS_MESSAGE
             = "User already exist with email: ";
     private static final String USER_WITH_NAME_EXISTS_MESSAGE = "User already exist with name: ";
+    private static final String PASSWORD_IS_NULL_MESSAGE = "Password required";
 
     @Autowired
     public UserService(UserRepository userRepository) {
@@ -44,11 +46,16 @@ public class UserService {
 
     public AuthorizationResponse createUser(UserCreateDto userDto) {
         User userEntity = UserMapper.fromDto(userDto);
+
         if (userRepository.existsByEmail(userEntity.getEmail())) {
             throw new ConflictException(USER_WITH_EMAIL_EXISTS_MESSAGE + userEntity.getEmail());
         }
         if (userRepository.existsByName(userEntity.getName())) {
             throw new ConflictException(USER_WITH_NAME_EXISTS_MESSAGE + userEntity.getEmail());
+        }
+
+        if (userEntity.getPassword() == null) {
+            throw new PasswordRequiredException(PASSWORD_IS_NULL_MESSAGE);
         }
 
         userEntity = userRepository.save(userEntity);
