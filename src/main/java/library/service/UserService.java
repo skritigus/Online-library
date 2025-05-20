@@ -55,7 +55,7 @@ public class UserService {
 
         AuthorizationResponse response = new AuthorizationResponse();
         response.setUserId(userEntity.getId());
-        response.setUsername(userEntity.getName());
+        response.setName(userEntity.getName());
         response.setEmail(userEntity.getEmail());
         response.setToken("dummy-token");
 
@@ -100,7 +100,7 @@ public class UserService {
 
         AuthorizationResponse response = new AuthorizationResponse();
         response.setUserId(user.getId());
-        response.setUsername(user.getName());
+        response.setName(user.getName());
         response.setEmail(user.getEmail());
         response.setToken("dummy-token");
 
