@@ -62,26 +62,29 @@ const ReviewList = () => {
             const response = await axios.get(`${process.env.REACT_APP_API_URL}/users`);
             setUsers(response.data);
         } catch (error) {
-            message.error('Не удалось загрузить книги');
+            message.error('Не удалось загрузить пользователей');
         } finally {
             setLoading(false);
         }
     };
 
     const showModal = (review = null) => {
+        if (!currentUser) {
+            message.warning('Для оставления отзыва необходимо авторизоваться');
+            return;
+        }
+
         setEditingReview(review);
         form.resetFields();
         if (review) {
             form.setFieldsValue({
-                name: review.name,
-                booksIds: books
-                    .filter(book => review.books?.includes(book.name))
-                    .map(book => book.id) || []
+                rating: review.rating,
+                comment: review.comment || ''
             });
         } else {
             form.setFieldsValue({
-                name: '',
-                booksIds: []
+                rating: null,
+                comment: ''
             });
         }
         setIsModalVisible(true);

@@ -2,6 +2,8 @@ package library.service;
 
 import jakarta.transaction.Transactional;
 import java.util.List;
+
+import library.cache.InMemoryCache;
 import library.dto.create.ReviewCreateDto;
 import library.dto.get.ReviewGetDto;
 import library.exception.AuthenticationException;
@@ -21,6 +23,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final BookRepository bookRepository;
     private final UserRepository userRepository;
+    private final InMemoryCache cache;
     private static final String BOOK_NOT_FOUND_MESSAGE = "Book is not found with id: ";
     private static final String REVIEW_NOT_FOUND_MESSAGE = "Review is not found with id: ";
     private static final String USER_NOT_FOUND_MESSAGE = "User is not found with id: ";
@@ -28,10 +31,11 @@ public class ReviewService {
     @Autowired
     public ReviewService(ReviewRepository reviewRepository,
                          BookRepository bookRepository,
-                         UserRepository userRepository) {
+                         UserRepository userRepository, InMemoryCache cache) {
         this.reviewRepository = reviewRepository;
         this.bookRepository = bookRepository;
         this.userRepository = userRepository;
+        this.cache = cache;
     }
 
     public List<ReviewGetDto> getAllReviews(Long bookId) {
@@ -78,6 +82,7 @@ public class ReviewService {
                 .mapToInt(Review::getRating)
                 .average().orElse(0.0));
 
+        cache.clear();
         return ReviewMapper.toDto(reviewRepository.save(review));
     }
 
@@ -107,6 +112,7 @@ public class ReviewService {
         user.getReviews().add(review);
         review.setUser(user);
 
+        cache.clear();
         return ReviewMapper.toDto(reviewRepository.save(review));
     }
 
@@ -118,10 +124,12 @@ public class ReviewService {
             throw new NotFoundException(REVIEW_NOT_FOUND_MESSAGE + id);
         }
 
+        reviewRepository.deleteById(id);
+
         book.setRating(book.getReviews().stream()
                 .mapToInt(Review::getRating)
                 .average().orElse(0.0));
 
-        reviewRepository.deleteById(id);
+        cache.clear();
     }
 }

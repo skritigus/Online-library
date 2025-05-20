@@ -37,7 +37,7 @@ const UserList = ({ currentUser, onUserUpdate }) => {
                     updateData.password = values.password;
                 }
 
-                const response = await axios.patch(
+                const response = await axios.put(
                     `${process.env.REACT_APP_API_URL}/users/${editingUser.id}`,
                     updateData
                 );

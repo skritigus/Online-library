@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, message } from 'antd';
-import {UserOutlined, MailOutlined, LockOutlined, EditOutlined, UserAddOutlined} from '@ant-design/icons';
+import {UserOutlined, MailOutlined, LockOutlined, EditOutlined} from '@ant-design/icons';
 import axios from "axios";
 
 const UserProfilePage = ({ user, onUserUpdate }) => {
@@ -20,7 +20,7 @@ const UserProfilePage = ({ user, onUserUpdate }) => {
     const onFinish = async (values) => {
         try {
             setLoading(true);
-            const response = await axios.patch(`${process.env.REACT_APP_API_URL}/users/${user.id}`,
+            const response = await axios.put(`${process.env.REACT_APP_API_URL}/users/${user.id}`,
                 {
                     name: values.name,
                     email: values.email,
@@ -38,7 +38,7 @@ const UserProfilePage = ({ user, onUserUpdate }) => {
 
     return (
         <div style={{ maxWidth: 600, margin: '0 auto' }}>
-            <h2>User Profile</h2>
+            <h2>Профиль пользователя</h2>
             <Form
                 form={form}
                 onFinish={onFinish}
