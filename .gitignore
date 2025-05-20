@@ -7,7 +7,7 @@ target/
 *.cmd
 *.iml
 htmlReport/
-*.env
+.env
 
 # Compiled class file
 *.class

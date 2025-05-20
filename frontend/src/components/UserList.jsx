@@ -112,16 +112,8 @@ const UserList = ({ currentUser, onUserUpdate }) => {
 
     return (
         <Spin spinning={loading} tip="Loading...">
-            <span className="name-text">Все отзывы</span>
+            <span className="name-text">Все пользователи</span>
             <div className="container">
-                <div className="actions">
-                    <Button type="primary"
-                            icon={<PlusOutlined/>}
-                            onClick={() => showModal()}
-                            className="add-button">
-                        Добавить пользователя
-                    </Button>
-                </div>
 
                 <Table dataSource={users} rowKey="id">
                     <Column title="Имя пользователя" dataIndex="name" key="name"/>
@@ -148,7 +140,7 @@ const UserList = ({ currentUser, onUserUpdate }) => {
                 </Table>
 
                 <Modal
-                    title="Изсенить пользователя"
+                    title="Изменить пользователя"
                     visible={isModalVisible}
                     onOk={() => form.submit()}
                     onCancel={() => setIsModalVisible(false)}
@@ -157,29 +149,30 @@ const UserList = ({ currentUser, onUserUpdate }) => {
                         <Form.Item
                             name="name"
                             label="Имя пользователя"
-                            rules={[{required: true, message: 'Введите имя пользователя'}]}
+                            rules={[
+                                {required: true, message: 'Введите имя пользователя'},
+                                {max: 100, message: 'Имя пользователя должен быть короче 101 символа'}
+                            ]}
 
                         >
-                            <Input placeholder="Enter username"/>
+                            <Input placeholder="Введите имя пользователя"/>
                         </Form.Item>
                         <Form.Item
                             name="email"
                             label="Email"
-                            rules={[{required: true, type: 'email', message: 'Please input valid email!'}]}
+                            rules={[{required: true, type: 'email', message: 'Введитк корректный email'}]}
                         >
-                            <Input placeholder="Enter email"/>
+                            <Input placeholder="Введите email"/>
                         </Form.Item>
                         <Form.Item
                             name="password"
-                            label="Password"
+                            label="Пароль"
                             rules={[
-                                editingUser ? null : {required: true, message: 'Please input password!'},
-                                {min: 4, message: 'Minimum 4 characters'},
-                                {max: 20, message: 'Maximum 20 characters'}
-                            ].filter(rule => rule !== null)}
+                                {min: 8, message: 'Пароль должен быть не короче 8 символов'},
+                            ]}
                         >
                             <Input.Password
-                                placeholder={editingUser ? "Leave empty to keep current" : "Enter password"}/>
+                                placeholder="Чтобы оставить текущий пароль, оставьте поле пустым"/>
                         </Form.Item>
                     </Form>
                 </Modal>

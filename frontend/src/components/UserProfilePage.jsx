@@ -28,7 +28,7 @@ const UserProfilePage = ({ user, onUserUpdate }) => {
                 }
             );
             onUserUpdate(response.data);
-            message.success('Profile updated successfully!');
+            message.success('Профиль пользователя изменен успешно');
         } catch (error) {
             message.error('Failed to update profile');
         } finally {
