@@ -261,7 +261,7 @@ const BookList = () => {
                                 placeholder="Выберите авторов"
                                 allowClear={false}
                             >
-                                {authors.map(author => (
+                                {Array.isArray(authors) && authors.map(author => (
                                     <Option key={author.id} value={author.id}>
                                         {author.name}
                                     </Option>
@@ -280,7 +280,7 @@ const BookList = () => {
                                 optionFilterProp="children"
                                 placeholder="Выберите жанры"
                             >
-                                {categories.map(category => (
+                                {Array.isArray(categories) && categories.map(category => (
                                     <Option key={category.id} value={category.id}>
                                         {category.name}
                                     </Option>
