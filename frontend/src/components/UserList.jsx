@@ -29,13 +29,11 @@ const UserList = ({ currentUser, onUserUpdate }) => {
 
     const handleUpdate = async (values) => {
         try {
-                const updateData = {};
-                if (values.name !== editingUser.name) updateData.name = values.name;
-                if (values.email !== editingUser.email) updateData.email = values.email;
-
-                if (values.password && values.password.trim() !== '') {
-                    updateData.password = values.password;
-                }
+            const updateData = {
+                name: values.name,
+                email: values.email,
+                password: values.password,
+            };
 
                 const response = await axios.put(
                     `${process.env.REACT_APP_API_URL}/users/${editingUser.id}`,

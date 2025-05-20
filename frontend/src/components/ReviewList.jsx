@@ -174,7 +174,9 @@ const ReviewList = () => {
                             render={(user) => (user?.name || '-')}
                     />
                     <Column title="Оценка" dataIndex="rating" key="rating" />
-                    <Column title="Комментарий" dataIndex="comment" key="comment" />
+                    <Column title="Комментарий" dataIndex="comment" key="comment"
+                            render={(text) => (text ? text : '-')}
+                    />
                     <Column
                         title="Действия"
                         key="action"

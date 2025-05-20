@@ -45,7 +45,7 @@ public class UserService {
     public AuthorizationResponse createUser(UserCreateDto userDto) {
         User userEntity = UserMapper.fromDto(userDto);
         if (userRepository.existsByEmail(userEntity.getEmail())) {
-            throw new ConflictException(USER_WITH_NAME_EXISTS_MESSAGE + userEntity.getEmail());
+            throw new ConflictException(USER_WITH_EMAIL_EXISTS_MESSAGE + userEntity.getEmail());
         }
         if (userRepository.existsByName(userEntity.getName())) {
             throw new ConflictException(USER_WITH_NAME_EXISTS_MESSAGE + userEntity.getEmail());
@@ -72,7 +72,7 @@ public class UserService {
             throw new ConflictException(USER_WITH_EMAIL_EXISTS_MESSAGE + userEntity.getEmail());
         }
         if (userWithName != null && !Objects.equals(userWithName.getId(), userEntity.getId())) {
-            throw new ConflictException(USER_WITH_NAME_EXISTS_MESSAGE + userEntity.getEmail());
+            throw new ConflictException(USER_WITH_NAME_EXISTS_MESSAGE + userEntity.getName());
         }
 
         userEntity.setEmail(userDto.getEmail());
