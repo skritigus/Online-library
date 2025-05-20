@@ -27,7 +27,11 @@ const BookList = () => {
         setLoading(true);
         try {
             const response = await axios.get(`${process.env.REACT_APP_API_URL}/books`);
-            setBooks(response.data);
+            setBooks(response.data.map(book => ({
+                ...book,
+                authors: Array.isArray(book.authors) ? book.authors : [],
+                categories: Array.isArray(book.categories) ? book.categories : [],
+            })));
         } catch (error) {
             message.error('Не удалось загрузить книги');
         } finally {
@@ -174,28 +178,30 @@ const BookList = () => {
                     <Column
                         title="Авторы"
                         key="authors"
-                        render={(_, book) => (
-                            Array.isArray(book.authors) && book.authors.length > 0 ? (
-                                book.authors.map((author, index) => (
+                        render={(_, book) => {
+                            const authors = Array.isArray(book.authors) ? book.authors : [];
+                            return authors.length > 0 ? (
+                                authors.map((author, index) => (
                                     <Tag key={index}>
-                                        {typeof author === 'string' ? author : author.name}
+                                        {typeof author === 'string' ? author : author?.name ?? '—'}
                                     </Tag>
                                 ))
-                            ) : '-'
-                        )}
+                            ) : '-';
+                        }}
                     />
                     <Column
                         title="Жанры"
                         key="categories"
-                        render={(_, book) => (
-                            Array.isArray(book.categories) && book.categories.length > 0 ? (
-                                book.categories.map((category, index) => (
+                        render={(_, book) => {
+                            const categories = Array.isArray(book.categories) ? book.categories : [];
+                            return categories.length > 0 ? (
+                                categories.map((category, index) => (
                                     <Tag key={index}>
-                                        {typeof category === 'string' ? category : category.name}
+                                        {typeof category === 'string' ? category : category?.name ?? '—'}
                                     </Tag>
                                 ))
-                            ) : '-'
-                        )}
+                            ) : '-';
+                        }}
                     />
                     <Column title="Год" dataIndex="year" key="year"
                             render={(year) => (year ? year : '-')}

@@ -21,15 +21,14 @@ const UserList = ({ currentUser, onUserUpdate }) => {
             const response = await axios.get(`${process.env.REACT_APP_API_URL}/users`);
             setUsers(response.data);
         } catch (error) {
-            message.error('Failed to fetch users');
+            message.error('Не удалось загрузить пользователей');
         } finally {
             setLoading(false);
         }
     };
 
-    const handleCreateOrUpdate = async (values) => {
+    const handleUpdate = async (values) => {
         try {
-            if (editingUser) {
                 const updateData = {};
                 if (values.name !== editingUser.name) updateData.name = values.name;
                 if (values.email !== editingUser.email) updateData.email = values.email;
@@ -47,15 +46,10 @@ const UserList = ({ currentUser, onUserUpdate }) => {
 
                 if (currentUser && currentUser.id === editingUser.id) {
                     onUserUpdate(response.data);
-                    message.success('Profile updated successfully!');
+                    message.success('Профиль пользователя изменен успешно');
                 } else {
-                    message.success('User updated successfully');
+                    message.success('Пользователь отредактирован успешно');
                 }
-            } else {
-                await axios.post(`${process.env.REACT_APP_API_URL}/users`, values);
-                message.success('User created successfully');
-                fetchUsers();
-            }
 
             setIsModalVisible(false);
         } catch (error) {
@@ -78,7 +72,7 @@ const UserList = ({ currentUser, onUserUpdate }) => {
                     duration:5,
                 });
             } else {
-                message.error('Failed to save user');
+                message.error('Не удалось сохранить пользователя');
             }
         }
     };
@@ -98,18 +92,18 @@ const UserList = ({ currentUser, onUserUpdate }) => {
 
     const handleDelete = async (id) => {
         Modal.confirm({
-                title: 'Delete User',
-                content: 'Are you sure you want to delete this user?',
-                okText: 'Delete',
+                title: 'Удалить пользователя',
+                content: 'Вы уверены, что хотите удалить данного пользователя?',
+                okText: 'Удалить',
                 okType: 'danger',
-                cancelText: 'Cancel',
+                cancelText: 'Отменить',
                 onOk: async () => {
                     try {
                         await axios.delete(`${process.env.REACT_APP_API_URL}/users/${id}`);
-                        message.success('User deleted successfully');
+                        message.success('Пользователь удален успешно');
                         fetchUsers();
                     } catch (error) {
-                        message.error('Failed to delete user');
+                        message.error('Не удалось удалить пользователя');
                     }
                 }
             }
@@ -154,16 +148,16 @@ const UserList = ({ currentUser, onUserUpdate }) => {
                 </Table>
 
                 <Modal
-                    title={editingUser ? "Edit User" : "Create User"}
+                    title="Изсенить пользователя"
                     visible={isModalVisible}
                     onOk={() => form.submit()}
                     onCancel={() => setIsModalVisible(false)}
                 >
-                    <Form form={form} onFinish={handleCreateOrUpdate} layout="vertical">
+                    <Form form={form} onFinish={handleUpdate} layout="vertical">
                         <Form.Item
                             name="name"
-                            label="Username"
-                            rules={[{required: true, message: 'Please input username!'}]}
+                            label="Имя пользователя"
+                            rules={[{required: true, message: 'Введите имя пользователя'}]}
 
                         >
                             <Input placeholder="Enter username"/>
