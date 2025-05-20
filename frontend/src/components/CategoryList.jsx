@@ -12,6 +12,7 @@ const CategoryList = () => {
     const [editingCategory, setEditingCategory] = useState(null);
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
 
     useEffect(() => {
         fetchCategories();
@@ -62,6 +63,7 @@ const CategoryList = () => {
     };
 
     const handleSubmit = async (values) => {
+        setSubmitting(true);
         try {
             const requestData = {
                 name: values.name,
@@ -101,6 +103,8 @@ const CategoryList = () => {
             } else {
                 message.error(error.response?.data?.message || 'Не удалось сохранить жанр');
             }
+        } finally {
+            setSubmitting(false);
         }
     };
 

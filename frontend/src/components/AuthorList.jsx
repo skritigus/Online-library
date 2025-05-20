@@ -13,6 +13,7 @@ const AuthorList = () => {
     const [editingAuthor, setEditingAuthor] = useState(null);
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
 
     useEffect(() => {
         fetchAuthors();
@@ -64,6 +65,7 @@ const AuthorList = () => {
     };
 
     const handleSubmit = async (values) => {
+        setSubmitting(true);
         try {
             const requestData = {
                 name: values.name,
@@ -103,6 +105,8 @@ const AuthorList = () => {
             } else {
                 message.error(error.response?.data?.message || 'Не удалось сохранить автора');
             }
+        } finally {
+            setSubmitting(false);
         }
     };
 

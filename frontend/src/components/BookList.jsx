@@ -16,6 +16,7 @@ const BookList = () => {
     const [editingBook, setEditingBook] = useState(null);
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
 
     useEffect(() => {
         fetchBooks();
@@ -96,6 +97,7 @@ const BookList = () => {
     };
 
     const handleSubmit = async (values) => {
+        setSubmitting(true);
         try {
             const requestData = {
                 name: values.name,
@@ -137,6 +139,8 @@ const BookList = () => {
             } else {
                 message.error(error.response?.data?.message || 'Не удалось сохранить книгу');
             }
+        } finally {
+            setSubmitting(false);
         }
     };
 

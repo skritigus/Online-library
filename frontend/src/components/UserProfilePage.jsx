@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, message } from 'antd';
-import {UserOutlined, MailOutlined, LockOutlined, EditOutlined} from '@ant-design/icons';
+import {UserOutlined, MailOutlined, LockOutlined, EditOutlined, UserAddOutlined} from '@ant-design/icons';
 import axios from "axios";
 
 const UserProfilePage = ({ user, onUserUpdate }) => {
@@ -30,7 +30,7 @@ const UserProfilePage = ({ user, onUserUpdate }) => {
             onUserUpdate(response.data);
             message.success('Профиль пользователя изменен успешно');
         } catch (error) {
-            message.error('Failed to update profile');
+            message.error('Не удалось отреактировать профиль');
         } finally {
             setLoading(false);
         }
@@ -46,34 +46,38 @@ const UserProfilePage = ({ user, onUserUpdate }) => {
             >
                 <Form.Item
                     name="name"
-                    label="Username"
-                    rules={[{ required: true, message: 'Please input your username!' }]}
+                    label="Имя пользователя"
+                    rules={[
+                        {required: true, message: 'Введите имя пользователя'},
+                        {max: 100, message: 'Имя пользователя должен быть короче 101 символа'}
+                    ]}
+
                 >
-                    <Input prefix={<UserOutlined />} />
+                    <Input prefix={<UserOutlined/>} placeholder="Введите имя пользователя"/>
                 </Form.Item>
 
                 <Form.Item
                     name="email"
                     label="Email"
-                    rules={[
-                        { type: 'email', message: 'Please input valid email!' },
-                        { required: true, message: 'Please input your email!' }
-                    ]}
+                    rules={[{required: true, type: 'email', message: 'Введите корректный email'}]}
                 >
-                    <Input prefix={<MailOutlined />} />
+                    <Input prefix={<MailOutlined/>} placeholder="Введите email"/>
                 </Form.Item>
 
                 <Form.Item
                     name="password"
-                    label="Password"
-                    rules={[{ message: 'Please input your password!' }]}
+                    label="Пароль"
+                    rules={[
+                        {min: 8, message: 'Пароль должен быть не короче 8 символов'},
+                    ]}
                 >
-                    <Input.Password prefix={<LockOutlined />} placeholder="Leave empty to keep current" />
+                    <Input.Password prefix={<LockOutlined/>}
+                        placeholder="Чтобы оставить текущий пароль, оставьте поле пустым"/>
                 </Form.Item>
 
                 <Form.Item>
                     <Button type="primary" htmlType="submit" loading={loading} icon={<EditOutlined />}>
-                        Update Profile
+                        Изменить профиль
                     </Button>
                 </Form.Item>
             </Form>

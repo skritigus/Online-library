@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {Table, Button, Space, Modal, Form, Input, message, Spin} from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import {EditOutlined, DeleteOutlined, UserOutlined, MailOutlined, LockOutlined} from '@ant-design/icons';
 import axios from 'axios';
 import Column from "antd/es/table/Column";
 
@@ -155,14 +155,14 @@ const UserList = ({ currentUser, onUserUpdate }) => {
                             ]}
 
                         >
-                            <Input placeholder="Введите имя пользователя"/>
+                            <Input prefix={<UserOutlined/>} placeholder="Введите имя пользователя"/>
                         </Form.Item>
                         <Form.Item
                             name="email"
                             label="Email"
-                            rules={[{required: true, type: 'email', message: 'Введитк корректный email'}]}
+                            rules={[{required: true, type: 'email', message: 'Введите корректный email'}]}
                         >
-                            <Input placeholder="Введите email"/>
+                            <Input prefix={<MailOutlined/>} placeholder="Введите email"/>
                         </Form.Item>
                         <Form.Item
                             name="password"
@@ -171,8 +171,8 @@ const UserList = ({ currentUser, onUserUpdate }) => {
                                 {min: 8, message: 'Пароль должен быть не короче 8 символов'},
                             ]}
                         >
-                            <Input.Password
-                                placeholder="Чтобы оставить текущий пароль, оставьте поле пустым"/>
+                            <Input.Password prefix={<LockOutlined/>}
+                                            placeholder="Чтобы оставить текущий пароль, оставьте поле пустым"/>
                         </Form.Item>
                     </Form>
                 </Modal>
