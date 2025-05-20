@@ -141,7 +141,7 @@ const UserList = ({ currentUser, onUserUpdate }) => {
 
                 <Modal
                     title="Изменить пользователя"
-                    visible={isModalVisible}
+                    open={isModalVisible}
                     onOk={() => form.submit()}
                     onCancel={() => setIsModalVisible(false)}
                 >

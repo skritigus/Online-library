@@ -198,6 +198,7 @@ const ReviewList = () => {
                     open={isModalVisible}
                     onOk={() => form.submit()}
                     onCancel={() => setIsModalVisible(false)}
+                    confirmLoading={submitting}
                     width={700}
                 >
                     <Form form={form} onFinish={handleSubmit} layout="vertical">

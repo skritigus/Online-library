@@ -246,6 +246,7 @@ const BookList = () => {
                     open={isModalVisible}
                     onOk={() => form.submit()}
                     onCancel={() => setIsModalVisible(false)}
+                    confirmLoading={submitting}
                     width={800}
                 >
                     <Form form={form} onFinish={handleSubmit} layout="vertical">
