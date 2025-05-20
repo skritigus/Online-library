@@ -38,7 +38,7 @@ public class BookMapper {
         if (reviews != null) {
             dto.setReviews(book.getReviews().stream()
                     .map(ReviewMapper::toDto)
-                    .collect(Collectors.toList()));
+                    .toList());
         }
         return dto;
 

@@ -199,13 +199,13 @@ const UserDropdown = ({ user, onLogout }) => {
               {
                 key: 'profile',
                 icon: <InfoCircleOutlined />,
-                label: 'Profile',
+                label: 'Профиль',
                 onClick: () => navigate(`/users/${user.id}/profile`)
               },
               {
                 key: 'logout',
                 icon: <LogoutOutlined />,
-                label: 'Logout',
+                label: 'Выйти',
                 onClick: onLogout
               }
             ]

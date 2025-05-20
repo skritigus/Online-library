@@ -12,7 +12,6 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.NamedAttributeNode;
 import jakarta.persistence.NamedEntityGraph;
-import jakarta.persistence.NamedSubgraph;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.List;
@@ -30,10 +29,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @NamedEntityGraph(name = "book_get_all",
         attributeNodes = {@NamedAttributeNode("authors"),
-                          @NamedAttributeNode("categories"),
-                          @NamedAttributeNode(value = "reviews", subgraph = "review_user")},
-        subgraphs = @NamedSubgraph(name = "review_user",
-                attributeNodes = @NamedAttributeNode("user")))
+                          @NamedAttributeNode("categories")})
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
