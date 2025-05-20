@@ -82,8 +82,11 @@ public class UserService {
             throw new ConflictException(USER_WITH_NAME_EXISTS_MESSAGE + userEntity.getName());
         }
 
+        if (userDto.getPassword() != null) {
+            userEntity.setPassword(userDto.getPassword());
+        }
+
         userEntity.setEmail(userDto.getEmail());
-        userEntity.setPassword(userDto.getPassword());
         userEntity.setName(userDto.getName());
         return UserMapper.toDto(userRepository.save(userEntity));
     }
