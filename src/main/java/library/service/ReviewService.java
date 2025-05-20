@@ -78,13 +78,7 @@ public class ReviewService {
         user.getReviews().add(review);
         review.setUser(user);
 
-        if (book.getReviews() != null) {
-            book.setRating(book.getReviews().stream()
-                    .mapToInt(Review::getRating)
-                    .average().orElse(0.0));
-        } else {
-            book.setRating(0.0);
-        }
+        recalculateBookRating(book);
 
         cache.clear();
         return ReviewMapper.toDto(reviewRepository.save(review));
@@ -112,13 +106,7 @@ public class ReviewService {
         user.getReviews().add(review);
         review.setUser(user);
 
-        if (book.getReviews() != null) {
-            book.setRating(book.getReviews().stream()
-                    .mapToInt(Review::getRating)
-                    .average().orElse(0.0));
-        } else {
-            book.setRating(0.0);
-        }
+        recalculateBookRating(book);
 
         cache.clear();
         return ReviewMapper.toDto(reviewRepository.save(review));
@@ -134,14 +122,18 @@ public class ReviewService {
 
         reviewRepository.deleteById(id);
 
-        if (book.getReviews() != null) {
-            book.setRating(book.getReviews().stream()
-                    .mapToInt(Review::getRating)
-                    .average().orElse(0.0));
-        } else {
-            book.setRating(0.0);
-        }
+        recalculateBookRating(book);
 
         cache.clear();
+    }
+
+    private void recalculateBookRating(Book book) {
+        List<Review> reviews = reviewRepository.findByBookId(book.getId());
+        double newRating = reviews.stream()
+                .mapToInt(Review::getRating)
+                .average()
+                .orElse(0.0);
+        book.setRating(newRating);
+        bookRepository.save(book); // Сохраняем обновлённый рейтинг
     }
 }
