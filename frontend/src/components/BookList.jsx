@@ -216,9 +216,14 @@ const BookList = () => {
                     <Column
                         title="Отзывы"
                         key="reviews"
-                        render={(_, book) => (
-                            <Link to={`/books/${book.id}/reviews`}>Посмотреть</Link>
-                        )}
+                        render={(_, book) => {
+                            const count = Array.isArray(book.reviews) ? book.reviews.length : 0;
+                            return (
+                                <Link to={`/books/${book.id}/reviews`}>
+                                    {count}
+                                </Link>
+                            );
+                        }}
                     />
                     <Column
                         title="Действия"
