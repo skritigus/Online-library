@@ -38,7 +38,7 @@ public class LogService {
             try {
                 Path sourcePath = Paths.get(LOG_FILE_PATH);
                 if (!Files.exists(sourcePath)) {
-                    throw new LogFileNotFoundException("Logs file does not exist");
+                    Files.createDirectory(sourcePath);
                 }
 
                 List<String> filteredLines;
