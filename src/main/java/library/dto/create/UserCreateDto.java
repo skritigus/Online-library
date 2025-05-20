@@ -19,6 +19,5 @@ public class UserCreateDto {
     @NotBlank(message = "Email can't be blank")
     @Email(message = "Invalid email")
     private String email;
-    @Size(min = 8, message = "Password must be more than 7 characters")
     private String password;
 }
