@@ -2,7 +2,6 @@ package library.service;
 
 import jakarta.transaction.Transactional;
 import java.util.List;
-
 import library.cache.InMemoryCache;
 import library.dto.create.ReviewCreateDto;
 import library.dto.get.ReviewGetDto;
@@ -86,9 +85,6 @@ public class ReviewService {
 
     @Transactional 
     public ReviewGetDto updateReview(Long id, Long bookId, ReviewCreateDto reviewDto) {
-        Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new NotFoundException(BOOK_NOT_FOUND_MESSAGE + bookId));
-
         Review review = reviewRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(REVIEW_NOT_FOUND_MESSAGE + id));
 
@@ -102,6 +98,9 @@ public class ReviewService {
         User user = userRepository.findById(reviewDto.getUserId())
                 .orElseThrow(()
                         -> new NotFoundException(USER_NOT_FOUND_MESSAGE + reviewDto.getUserId()));
+
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new NotFoundException(BOOK_NOT_FOUND_MESSAGE + bookId));
 
         user.getReviews().add(review);
         review.setUser(user);
