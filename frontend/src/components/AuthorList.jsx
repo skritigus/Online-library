@@ -185,7 +185,9 @@ const AuthorList = () => {
                     title={editingAuthor ? "Редактировать автора" : "Добавить автора"}
                     open={isModalVisible}
                     onOk={() => form.submit()}
+                    okText={editingAuthor ? "Изменить" : "Добавить"}
                     onCancel={() => setIsModalVisible(false)}
+                    cancelText="Отменить"
                     confirmLoading={submitting}
                     width={700}
                 >

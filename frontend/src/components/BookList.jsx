@@ -250,7 +250,9 @@ const BookList = () => {
                     title={editingBook ? "Редактировать книгу" : "Добавить книгу"}
                     open={isModalVisible}
                     onOk={() => form.submit()}
+                    okText={editingBook ? "Изменить" : "Добавить"}
                     onCancel={() => setIsModalVisible(false)}
+                    cancelText="Отменить"
                     confirmLoading={submitting}
                     width={800}
                 >

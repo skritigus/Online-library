@@ -168,7 +168,9 @@ const CategoryList = () => {
                     title={editingCategory ? "Редактировать жанр" : "Добавить жанр"}
                     open={isModalVisible}
                     onOk={() => form.submit()}
+                    okText={editingCategory ? "Изменить" : "Добавить"}
                     onCancel={() => setIsModalVisible(false)}
+                    cancelText="Отменить"
                     confirmLoading={submitting}
                     width={700}
                 >

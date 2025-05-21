@@ -202,7 +202,9 @@ const ReviewList = () => {
                     title={editingReview ? "Изменить отзыв" : "Добавить отзыв"}
                     open={isModalVisible}
                     onOk={() => form.submit()}
+                    okText={editingReview ? "Изменить" : "Добавить"}
                     onCancel={() => setIsModalVisible(false)}
+                    cancelText="Отменить"
                     confirmLoading={submitting}
                     width={700}
                 >

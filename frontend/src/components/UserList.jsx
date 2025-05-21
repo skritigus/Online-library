@@ -141,7 +141,9 @@ const UserList = ({ currentUser, onUserUpdate }) => {
                     title="Изменить пользователя"
                     open={isModalVisible}
                     onOk={() => form.submit()}
+                    okText="Изменить"
                     onCancel={() => setIsModalVisible(false)}
+                    cancelText="Отменить"
                 >
                     <Form form={form} onFinish={handleUpdate} layout="vertical">
                         <Form.Item
